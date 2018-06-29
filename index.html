@@ -29,10 +29,6 @@
             })
         }
 
-        console.log('Online status: ', ipfsNode.isOnline() ? 'online' : 'offline')
-
-        //post("Bonjour");
-
         contract.getPastEvents('allEvents', { fromBlock: 0, toBlock: 'latest' }, (error, eventResults) => {
             if (error)
                 console.log('Error in Message event handler: ' + error);
