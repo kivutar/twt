@@ -24,13 +24,13 @@
 
         function post(message) {
             ipfs.files.write('/dummy', Buffer.from(message), { create: true }, (err) => {
-                    ipfs.files.stat('/dummy', (err, stats) => {
-                        console.log(stats.hash)
-                        contract.post(stats.hash, {from: "0xd75f250914eac15ab3644b1c15bd27a77e326ba1"}, function(error, result){
-                            console.log(error, result);
-                        });
-                    })
+                ipfs.files.stat('/dummy', (err, stats) => {
+                    console.log(stats.hash)
+                    contract.post(stats.hash, { from: "0xd75f250914eac15ab3644b1c15bd27a77e326ba1" }, function (error, result) {
+                        console.log(error, result);
+                    });
                 })
+            })
         }
 
         function handleInit(err) {
@@ -47,14 +47,10 @@
                     if (error)
                         console.log('Error in Message event handler: ' + error);
 
-                    eventResults.forEach(function(result) {
-                        fetch('https://ipfs.io/ipfs/' + result.args._hashContent)
-                            .then(function (response) {
-                                return response.text();
-                            })
-                            .then(function (text) {
-                                document.getElementById("messages").innerHTML += '<p>'+text+'</p>';
-                            })
+                    eventResults.forEach(function (result) {
+                        ipfs.files.cat(result.args._hashContent, function (err, file) {
+                            document.getElementById("messages").innerHTML += '<p>' + file.toString('utf8') + '</p>';
+                        })
                     });
                 });
             });
