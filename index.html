@@ -13,51 +13,35 @@
         var contractAddress = "0x199acc74a2e6262f583400d64085eb605825dfd5";
         var contract = new web3Instance.eth.Contract(ABI, contractAddress);
 
-        const node = new Ipfs({
-            init: false,
-            start: false,
+        const ipfsNode = new Ipfs({
             repo: 'ipfs-' + Math.random()
         });
 
-        node.init(handleInit);
-
         function post(message) {
-            ipfs.files.write('/dummy', Buffer.from(message), { create: true }, (err) => {
-                ipfs.files.stat('/dummy', (err, stats) => {
+            ipfsNode.files.write('/dummy', Buffer.from(message), { create: true }, (err) => {
+                ipfsNode.files.stat('/dummy', (err, stats) => {
                     console.log(stats.hash)
-                    contract.post(stats.hash, { from: "0xd75f250914eac15ab3644b1c15bd27a77e326ba1" }, function (error, result) {
+                    contract.post(stats.hash, { from: web3.eth.defaultAccount }, function (error, result) {
                         console.log(error, result);
                     });
                 })
             })
         }
 
-        function handleInit(err) {
-            if (err) {
-                throw err
-            }
-            node.start(() => {
-                console.log('Online status: ', node.isOnline() ? 'online' : 'offline')
-                document.getElementById("status").innerHTML = 'Node status: ' + (node.isOnline() ? 'online' : 'offline')
+        console.log('Online status: ', ipfsNode.isOnline() ? 'online' : 'offline')
 
-                //post("Bonjour");
+        //post("Bonjour");
 
-                contract.getPastEvents('allEvents', { fromBlock: 0, toBlock: 'latest' }, (error, eventResults) => {
-                    if (error)
-                        console.log('Error in Message event handler: ' + error);
+        contract.getPastEvents('allEvents', { fromBlock: 0, toBlock: 'latest' }, (error, eventResults) => {
+            if (error)
+                console.log('Error in Message event handler: ' + error);
 
-                    eventResults.forEach(function (result) {
-                        fetch('https://ipfs.io/ipfs/' + result.returnValues._hashContent)
-                            .then(function (response) {
-                                return response.text();
-                            })
-                            .then(function (text) {
-                                document.getElementById("messages").innerHTML += '<p>' + text + '</p>';
-                            })
-                    });
-                });
+            eventResults.forEach(function (result) {
+                ipfsNode.files.cat(result.returnValues._hashContent, function (err, file) {
+                    document.getElementById("messages").innerHTML += '<p>' + file.toString('utf8') + '</p>';
+                })
             });
-        }
+        });
     </script>
 </head>
 
