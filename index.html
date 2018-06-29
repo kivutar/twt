@@ -14,11 +14,11 @@
         var contractAddress = "0x199acc74a2e6262f583400d64085eb605825dfd5";
         var contract = new web3Instance.eth.Contract(ABI, contractAddress);
 
-        const ipfsNode = new Ipfs({
+        const ipfsNode = ipfs || new Ipfs({
             repo: 'twt',
         });
 
-        ipfsNode.once('ready', () => document.getElementById("status").innerHTML = "ready");
+        //ipfsNode.once('ready', () => document.getElementById("status").innerHTML = "ready");
 
         function post(message) {
             ipfsNode.files.add({ path: '/dummy', content: Buffer.from(message) }, (err, files) => {
