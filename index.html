@@ -4,6 +4,7 @@
 <head>
 
     <script src="https://unpkg.com/ipfs/dist/index.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
     <script src="https://cdn.jsdelivr.net/gh/ethereum/web3.js@1.0.0-beta.34/dist/web3.min.js"></script>
     <script type="text/javascript">
         var web3Instance = new Web3(Web3.givenProvider || Web3.currentProvider || 'https://rinkeby.infura.io');
@@ -48,6 +49,24 @@
 <body>
     <div id="status"></div>
     <div id="messages"></div>
+    <div id="twitter-app">
+        <p>{{ message }}</p>
+        <input v-model="message">
+        <button v-on:click="submitPost()">Post</button>
+    </div>
+    <script>
+        var app6 = new Vue({
+            el: '#twitter-app',
+            data: {
+                message: 'Post a message'
+            },
+            methods: {
+                submitPost: function () {
+                    post(this.$data.message)
+                }
+            }
+        })
+    </script>
 </body>
 
 </html>
