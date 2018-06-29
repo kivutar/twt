@@ -18,6 +18,8 @@
             repo: 'twt',
         });
 
+        ipfsNode.once('ready', () => document.getElementById("status").innerHTML = "ready");
+
         function post(message) {
             ipfsNode.files.add({ path: '/dummy', content: Buffer.from(message) }, (err, files) => {
                 console.log('Posting ' + files[0].hash);
@@ -47,7 +49,7 @@
 </head>
 
 <body>
-    <div id="status"></div>
+    <p id="status"></p>
     <div id="twitter-app">
         <input v-model="message">
         <button v-on:click="submitPost()">Post</button>
