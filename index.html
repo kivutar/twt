@@ -4,15 +4,14 @@
 <head>
 
     <script src="https://unpkg.com/ipfs/dist/index.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/ethereum/web3.js@1.0.0-beta.34/dist/web3.min.js"></script>
     <script type="text/javascript">
-        //var web3 = window.web3;
-        web3 = new Web3(web3.currentProvider);
-        web3.eth.defaultAccount = web3.eth.coinbase;
-        //web3.setProvider(new web3.providers.HttpProvider('https://rinkeby.infura.io'));
+        var web3Instance = new Web3(Web3.givenProvider || Web3.currentProvider || 'https://rinkeby.infura.io');
+        web3Instance.eth.defaultAccount = web3Instance.eth.coinbase;
 
         var ABI = [{ "constant": true, "inputs": [{ "name": "", "type": "uint256" }], "name": "hashes", "outputs": [{ "name": "sender", "type": "address" }, { "name": "content", "type": "string" }, { "name": "timestamp", "type": "uint256" }], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": false, "inputs": [{ "name": "_hashContent", "type": "string" }], "name": "post", "outputs": [], "payable": true, "stateMutability": "payable", "type": "function" }, { "constant": true, "inputs": [], "name": "lastHashId", "outputs": [{ "name": "", "type": "uint256" }], "payable": false, "stateMutability": "view", "type": "function" }, { "inputs": [], "payable": false, "stateMutability": "nonpayable", "type": "constructor" }, { "anonymous": false, "inputs": [{ "indexed": true, "name": "_hashSender", "type": "address" }, { "indexed": false, "name": "_hashId", "type": "uint256" }, { "indexed": false, "name": "_hashContent", "type": "string" }, { "indexed": false, "name": "timestamp", "type": "uint256" }], "name": "Message", "type": "event" }]
         var contractAddress = "0x199acc74a2e6262f583400d64085eb605825dfd5";
-        var contract = web3.eth.contract(ABI).at(contractAddress);
+        var contract = new web3Instance.eth.Contract(ABI, contractAddress);
 
         const node = new Ipfs({
             init: false,
@@ -24,13 +23,13 @@
 
         function post(message) {
             ipfs.files.write('/dummy', Buffer.from(message), { create: true }, (err) => {
-                    ipfs.files.stat('/dummy', (err, stats) => {
-                        console.log(stats.hash)
-                        contract.post(stats.hash, {from: "0xd75f250914eac15ab3644b1c15bd27a77e326ba1"}, function(error, result){
-                            console.log(error, result);
-                        });
-                    })
+                ipfs.files.stat('/dummy', (err, stats) => {
+                    console.log(stats.hash)
+                    contract.post(stats.hash, { from: "0xd75f250914eac15ab3644b1c15bd27a77e326ba1" }, function (error, result) {
+                        console.log(error, result);
+                    });
                 })
+            })
         }
 
         function handleInit(err) {
@@ -43,17 +42,17 @@
 
                 //post("Bonjour");
 
-                contract.Message({}, { fromBlock: 0, toBlock: 'latest' }).get((error, eventResults) => {
+                contract.getPastEvents('allEvents', { fromBlock: 0, toBlock: 'latest' }, (error, eventResults) => {
                     if (error)
                         console.log('Error in Message event handler: ' + error);
 
-                    eventResults.forEach(function(result) {
-                        fetch('https://ipfs.io/ipfs/' + result.args._hashContent)
+                    eventResults.forEach(function (result) {
+                        fetch('https://ipfs.io/ipfs/' + result.returnValues._hashContent)
                             .then(function (response) {
                                 return response.text();
                             })
                             .then(function (text) {
-                                document.getElementById("messages").innerHTML += '<p>'+text+'</p>';
+                                document.getElementById("messages").innerHTML += '<p>' + text + '</p>';
                             })
                     });
                 });
