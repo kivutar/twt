@@ -15,7 +15,7 @@ contract Contract {
     constructor() public {
     }
 
-    function save(string _hashContent) public {
+    function post(string _hashContent) public {
         uint id = ++lastHashId;
         hashes[id].sender = msg.sender;
         hashes[id].content = _hashContent;
