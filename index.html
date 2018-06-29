@@ -22,7 +22,7 @@
             ipfs.files.write('/dummy', Buffer.from(message), { create: true }, (err) => {
                 ipfs.files.stat('/dummy', (err, stats) => {
                     console.log(stats.hash)
-                    contract.post(stats.hash, { from: web3.eth.defaultAccount }, function (error, result) {
+                    contract.methods.post(stats.hash).call({ from: web3.eth.defaultAccount }, function (error, result) {
                         console.log(error, result);
                     });
                 })
