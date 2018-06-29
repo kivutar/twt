@@ -19,8 +19,8 @@
         });
 
         function post(message) {
-            ipfsNode.files.write('/dummy', Buffer.from(message), { create: true }, (err) => {
-                ipfsNode.files.stat('/dummy', (err, stats) => {
+            ipfs.files.write('/dummy', Buffer.from(message), { create: true }, (err) => {
+                ipfs.files.stat('/dummy', (err, stats) => {
                     console.log(stats.hash)
                     contract.post(stats.hash, { from: web3.eth.defaultAccount }, function (error, result) {
                         console.log(error, result);
@@ -38,7 +38,7 @@
                 console.log('Error in Message event handler: ' + error);
 
             eventResults.forEach(function (result) {
-                ipfsNode.files.cat(result.returnValues._hashContent, function (err, file) {
+                ipfs.files.cat(result.returnValues._hashContent, function (err, file) {
                     document.getElementById("messages").innerHTML += '<p>' + file.toString('utf8') + '</p>';
                 })
             });
