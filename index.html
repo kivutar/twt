@@ -38,7 +38,7 @@
                 console.log(result.returnValues._hashContent);
                 ipfsNode.files.cat(result.returnValues._hashContent, function (err, file) {
                     if (err) {
-                        console.log('ipfs.file.cat:', err);
+                        document.getElementById("messages").innerHTML += '<p>' + err + '</p>';
                     } else {
                         document.getElementById("messages").innerHTML += '<p>' + file.toString('utf8') + '</p>';
                     }
