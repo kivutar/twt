@@ -1,0 +1,27 @@
+body {
+    background: #e6ecf0;
+    margin: 0;
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-size: 14px;
+}
+
+.container {
+    background: white;
+    width: 564px;
+    margin: 0 auto;
+}
+
+#messages>div {
+    border-bottom: #e6ecf0 solid 1px;
+    padding: 9px 12px;
+}
+
+#twitter-app {
+    background: #e5f2f7;
+    border-bottom: #e6ecf0 solid 1px;
+    padding: 9px 12px;
+}
+
+#twitter-app input {
+    display: block;
+}

@@ -38,23 +38,26 @@
                 console.log(result.returnValues._hashContent);
                 ipfsNode.files.cat(result.returnValues._hashContent, function (err, file) {
                     if (err) {
-                        document.getElementById("messages").innerHTML += '<p>' + err + '</p>';
+                        document.getElementById("messages").innerHTML += '<div>' + err + '</div>';
                     } else {
-                        document.getElementById("messages").innerHTML += '<p>' + file.toString('utf8') + '</p>';
+                        document.getElementById("messages").innerHTML += '<div>' + file.toString('utf8') + '</div>';
                     }
                 });
             });
         });
     </script>
+    <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
-    <p id="status"></p>
-    <div id="twitter-app">
-        <input v-model="message">
-        <button v-on:click="submitPost()">Post</button>
-    </div>
-    <div id="messages"></div>
+    <div class="container">
+        <div id="status"></div>
+        <div id="twitter-app">
+            <input v-model="message">
+            <button v-on:click="submitPost()">Post</button>
+        </div>
+        <div id="messages"></div>
+    <div>
     <script>
         var app6 = new Vue({
             el: '#twitter-app',
