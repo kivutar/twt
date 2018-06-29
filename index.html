@@ -15,46 +15,34 @@
         var contract = web3.eth.contract(ABI).at(contractAddress);
 
         const node = new Ipfs({
-            init: false,
-            start: false,
             repo: 'ipfs-' + Math.random()
         });
-
-        node.init(handleInit);
 
         function post(message) {
             ipfs.files.write('/dummy', Buffer.from(message), { create: true }, (err) => {
                 ipfs.files.stat('/dummy', (err, stats) => {
                     console.log(stats.hash)
-                    contract.post(stats.hash, { from: "0xd75f250914eac15ab3644b1c15bd27a77e326ba1" }, function (error, result) {
+                    contract.post(stats.hash, { from: web3.eth.defaultAccount }, function (error, result) {
                         console.log(error, result);
                     });
                 })
             })
         }
 
-        function handleInit(err) {
-            if (err) {
-                throw err
-            }
-            node.start(() => {
-                console.log('Online status: ', node.isOnline() ? 'online' : 'offline')
-                document.getElementById("status").innerHTML = 'Node status: ' + (node.isOnline() ? 'online' : 'offline')
+        console.log('Online status: ', node.isOnline() ? 'online' : 'offline')
 
-                //post("Bonjour");
+        //post("Bonjour");
 
-                contract.Message({}, { fromBlock: 0, toBlock: 'latest' }).get((error, eventResults) => {
-                    if (error)
-                        console.log('Error in Message event handler: ' + error);
+        contract.Message({}, { fromBlock: 0, toBlock: 'latest' }).get((error, eventResults) => {
+            if (error)
+                console.log('Error in Message event handler: ' + error);
 
-                    eventResults.forEach(function (result) {
-                        ipfs.files.cat(result.args._hashContent, function (err, file) {
-                            document.getElementById("messages").innerHTML += '<p>' + file.toString('utf8') + '</p>';
-                        })
-                    });
-                });
+            eventResults.forEach(function (result) {
+                ipfs.files.cat(result.args._hashContent, function (err, file) {
+                    document.getElementById("messages").innerHTML += '<p>' + file.toString('utf8') + '</p>';
+                })
             });
-        }
+        });
     </script>
 </head>
 
