@@ -15,18 +15,17 @@
         var contract = new web3Instance.eth.Contract(ABI, contractAddress);
 
         const ipfsNode = new Ipfs({
-            repo: 'ipfs-' + Math.random()
+            repo: 'twt',
         });
 
         function post(message) {
-            ipfs.files.write('/dummy', Buffer.from(message), { create: true }, (err) => {
-                ipfs.files.stat('/dummy', (err, stats) => {
-                    console.log(stats.hash)
-                    contract.methods.post(stats.hash).send({ from: web3.eth.defaultAccount }, function (error, result) {
-                        console.log(error, result);
-                    });
-                })
-            })
+            ipfsNode.files.add({ path: '/dummy', content: Buffer.from(message) }, (err, files) => {
+                console.log('Posting ' + files[0].hash);
+                //ipfsNode.pin.add(files[0].hash, function (err) { console.log(err); });
+                contract.methods.post(files[0].hash).send({ from: web3.eth.defaultAccount }, function (error, result) {
+                    console.log(error, result);
+                });
+            });
         }
 
         contract.getPastEvents('allEvents', { fromBlock: 0, toBlock: 'latest' }, (error, eventResults) => {
@@ -34,9 +33,14 @@
                 console.log('Error in Message event handler: ' + error);
 
             eventResults.forEach(function (result) {
-                ipfs.files.cat(result.returnValues._hashContent, function (err, file) {
-                    document.getElementById("messages").innerHTML += '<p>' + file.toString('utf8') + '</p>';
-                })
+                console.log(result.returnValues._hashContent);
+                ipfsNode.files.cat(result.returnValues._hashContent, function (err, file) {
+                    if (err) {
+                        console.log('ipfs.file.cat:', err);
+                    } else {
+                        document.getElementById("messages").innerHTML += '<p>' + file.toString('utf8') + '</p>';
+                    }
+                });
             });
         });
     </script>
@@ -44,17 +48,16 @@
 
 <body>
     <div id="status"></div>
-    <div id="messages"></div>
     <div id="twitter-app">
-        <p>{{ message }}</p>
         <input v-model="message">
         <button v-on:click="submitPost()">Post</button>
     </div>
+    <div id="messages"></div>
     <script>
         var app6 = new Vue({
             el: '#twitter-app',
             data: {
-                message: 'Post a message'
+                message: ''
             },
             methods: {
                 submitPost: function () {
