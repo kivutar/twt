@@ -19,9 +19,10 @@
 
         function post(message) {
             ipfsNode.files.add({ path: '/dummy', content: Buffer.from(message) }, (err, files) => {
-                console.log('Posting ' + files[0].hash);
-                //ipfsNode.pin.add(files[0].hash, function (err) { console.log(err); });
-                contract.methods.post(files[0].hash).send({ from: web3.eth.defaultAccount }, function (err, result) {
+                hash = files[0].hash;
+                console.log('Posting ' + hash);
+                //ipfsNode.pin.add(hash, function (err) { console.log(err); });
+                contract.methods.post(hash).send({ from: web3.eth.defaultAccount }, function (err, result) {
                     console.log(err, result);
                 });
             });
