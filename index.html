@@ -14,7 +14,7 @@
         var contractAddress = "0x199acc74a2e6262f583400d64085eb605825dfd5";
         var contract = new web3Instance.eth.Contract(ABI, contractAddress);
 
-        const ipfsNode = ipfs || new Ipfs({
+        const ipfsNode = window.ipfs || new Ipfs({
             repo: 'twt',
         });
 
