@@ -30,13 +30,13 @@
             });
         }
 
-        contract.getPastEvents('allEvents', { fromBlock: 0, toBlock: 'latest' }, (error, eventResults) => {
+        contract.getPastEvents('Message', { fromBlock: 0, toBlock: 'latest' }, (error, events) => {
             if (error)
                 console.log('Error in Message event handler: ' + error);
 
-            eventResults.forEach(function (result) {
-                console.log(result.returnValues._hashContent);
-                ipfsNode.files.cat(result.returnValues._hashContent, function (err, file) {
+            events.forEach(function (event) {
+                console.log(event.returnValues._hashContent);
+                ipfsNode.files.cat(event.returnValues._hashContent, function (err, file) {
                     if (err) {
                         document.getElementById("messages").innerHTML += '<div>' + err + '</div>';
                     } else {
@@ -57,7 +57,7 @@
             <button v-on:click="submitPost()">Post</button>
         </div>
         <div id="messages"></div>
-    <div>
+    </div>
     <script>
         var app6 = new Vue({
             el: '#twitter-app',
