@@ -13,9 +13,9 @@
         var contractAddress = "0x199acc74a2e6262f583400d64085eb605825dfd5";
         var contract = new web3Instance.eth.Contract(ABI, contractAddress);
 
-        const ipfsNode = window.ipfs || new Ipfs({
+        const ipfsNode = window.ipfs; /*|| new Ipfs({
             repo: 'twt',
-        });
+        });*/
 
         function post(message) {
             ipfsNode.files.add({ path: '/dummy', content: Buffer.from(message) }, (err, files) => {
@@ -33,14 +33,25 @@
                 console.log('Error in Message event handler: ' + err);
 
             events.forEach(function (event) {
-                console.log("Retrieving " + event.returnValues._hashContent);
-                ipfsNode.files.cat(event.returnValues._hashContent, function (err, file) {
-                    if (err) {
-                        document.getElementById("messages").innerHTML += '<div>' + err + '</div>';
-                    } else {
-                        document.getElementById("messages").innerHTML += '<div>' + file.toString('utf8') + '</div>';
-                    }
-                });
+                hash = event.returnValues._hashContent;
+                console.log("Retrieving " + hash);
+                if (ipfsNode) {
+                    ipfsNode.files.cat(hash, function (err, file) {
+                        if (err) {
+                            document.getElementById("messages").innerHTML += '<div>' + err + '</div>';
+                        } else {
+                            document.getElementById("messages").innerHTML += '<div>' + file.toString('utf8') + '</div>';
+                        }
+                    });
+                } else {
+                    fetch('https://ipfs.io/ipfs/' + hash)
+                        .then(function (response) {
+                            return response.text();
+                        })
+                        .then(function (text) {
+                            document.getElementById("messages").innerHTML += '<div>' + text + '</div>';
+                        })
+                }
             });
         });
     </script>
