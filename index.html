@@ -24,18 +24,18 @@
             ipfsNode.files.add({ path: '/dummy', content: Buffer.from(message) }, (err, files) => {
                 console.log('Posting ' + files[0].hash);
                 //ipfsNode.pin.add(files[0].hash, function (err) { console.log(err); });
-                contract.methods.post(files[0].hash).send({ from: web3.eth.defaultAccount }, function (error, result) {
-                    console.log(error, result);
+                contract.methods.post(files[0].hash).send({ from: web3.eth.defaultAccount }, function (err, result) {
+                    console.log(err, result);
                 });
             });
         }
 
-        contract.getPastEvents('Message', { fromBlock: 0, toBlock: 'latest' }, (error, events) => {
-            if (error)
-                console.log('Error in Message event handler: ' + error);
+        contract.getPastEvents('Message', { fromBlock: 0, toBlock: 'latest' }, (err, events) => {
+            if (err)
+                console.log('Error in Message event handler: ' + err);
 
             events.forEach(function (event) {
-                console.log(event.returnValues._hashContent);
+                console.log("Retrieving " + event.returnValues._hashContent);
                 ipfsNode.files.cat(event.returnValues._hashContent, function (err, file) {
                     if (err) {
                         document.getElementById("messages").innerHTML += '<div>' + err + '</div>';
