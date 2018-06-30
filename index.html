@@ -28,30 +28,53 @@
             });
         }
 
+        function insertMessage(id, sender, content) {
+            document.getElementById("messages").innerHTML += '' +
+                '<div id="twt-' + id + '">' +
+                '<div class="sender"><a>Anonymous</a> <span>@' + sender.substring(2,10) + '</span></div>' +
+                '<div class="content">' + content + '</div>' +
+                '</div>';
+        }
+
+        function updateMessage(id, sender, content) {
+            document.getElementById("twt-" + id).innerHTML = '' +
+                '<div class="sender"><a>Anonymous</a> <span>@' + sender.substring(2,10) + '</span></div>' +
+                '<div class="content">' + content + '</div>';
+        }
+
+        function retrieveMessage(event) {
+            console.log(event);
+            var id = event.returnValues._hashId;
+            var sender = event.returnValues._hashSender;
+            var hash = event.returnValues._hashContent;
+
+            console.log("Retrieving " + hash);
+            if (ipfsNode) {
+                ipfsNode.files.cat(hash, function (err, file) {
+                    if (err) {
+                        updateMessage(id, sender, err);
+                    } else {
+                        updateMessage(id, sender, file.toString('utf8'));
+                    }
+                });
+            } else {
+                fetch('https://ipfs.io/ipfs/' + hash)
+                    .then(function (response) {
+                        return response.text();
+                    })
+                    .then(function (text) {
+                        updateMessage(id, sender, text);
+                    })
+            }
+        }
+
         contract.getPastEvents('Message', { fromBlock: 0, toBlock: 'latest' }, (err, events) => {
             if (err)
                 console.log('Error in Message event handler: ' + err);
 
             events.forEach(function (event) {
-                hash = event.returnValues._hashContent;
-                console.log("Retrieving " + hash);
-                if (ipfsNode) {
-                    ipfsNode.files.cat(hash, function (err, file) {
-                        if (err) {
-                            document.getElementById("messages").innerHTML += '<div>' + err + '</div>';
-                        } else {
-                            document.getElementById("messages").innerHTML += '<div>' + file.toString('utf8') + '</div>';
-                        }
-                    });
-                } else {
-                    fetch('https://ipfs.io/ipfs/' + hash)
-                        .then(function (response) {
-                            return response.text();
-                        })
-                        .then(function (text) {
-                            document.getElementById("messages").innerHTML += '<div>' + text + '</div>';
-                        })
-                }
+                insertMessage(event.returnValues._hashId, event.returnValues._hashSender, "<i>Loading...</i>");
+                retrieveMessage(event);
             });
         });
     </script>

@@ -17,6 +17,7 @@ body {
     margin: 0;
     font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     font-size: 14px;
+    -webkit-font-smoothing: antialiased;
 }
 
 .container {
@@ -33,6 +34,16 @@ body {
 
 #messages>div:hover {
     background: #f5f8fa;
+}
+
+#messages .sender a {
+    font-weight: bold;
+}
+
+#messages .sender span {
+    color: #657786;
+    font-family: "Menlo", monospace;
+    text-transform: lowercase;
 }
 
 #twitter-app {
