@@ -29,11 +29,11 @@
         }
 
         function insertMessage(id, sender, content) {
-            document.getElementById("messages").innerHTML += '' +
+            document.getElementById("messages").innerHTML = '' +
                 '<div id="twt-' + id + '">' +
                 '<div class="sender"><a>Anonymous</a> <span>@' + sender.substring(2,10) + '</span></div>' +
                 '<div class="content">' + content + '</div>' +
-                '</div>';
+                '</div>' + document.getElementById("messages").innerHTML;
         }
 
         function updateMessage(id, sender, content) {
