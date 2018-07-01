@@ -28,17 +28,25 @@
             });
         }
 
-        function insertMessage(id, sender, content) {
+        function insertMessage(id, sender, content, timestamp) {
             document.getElementById("messages").innerHTML = '' +
                 '<div id="twt-' + id + '">' +
-                '<div class="sender"><a>Anonymous</a> <span>@' + sender.substring(2,10) + '</span></div>' +
+                '<div class="sender">' +
+                '<a>Anonymous</a> ' +
+                '<span>@' + sender.substring(2, 10) + '</span>' +
+                ' · <span>' + new Date(timestamp * 1000).toLocaleString() + '</span>' +
+                '</div>' +
                 '<div class="content">' + content + '</div>' +
                 '</div>' + document.getElementById("messages").innerHTML;
         }
 
-        function updateMessage(id, sender, content) {
+        function updateMessage(id, sender, content, timestamp) {
             document.getElementById("twt-" + id).innerHTML = '' +
-                '<div class="sender"><a>Anonymous</a> <span>@' + sender.substring(2,10) + '</span></div>' +
+                '<div class="sender">' +
+                '<a>Anonymous</a> ' +
+                '<span>@' + sender.substring(2, 10) + '</span>' +
+                ' · <span>' + new Date(timestamp * 1000).toLocaleString() + '</span>' +
+                '</div>' +
                 '<div class="content">' + content + '</div>';
         }
 
@@ -47,14 +55,15 @@
             var id = event.returnValues._hashId;
             var sender = event.returnValues._hashSender;
             var hash = event.returnValues._hashContent;
+            var timestamp = event.returnValues.timestamp;
 
             console.log("Retrieving " + hash);
             if (ipfsNode) {
                 ipfsNode.files.cat(hash, function (err, file) {
                     if (err) {
-                        updateMessage(id, sender, err);
+                        updateMessage(id, sender, err, timestamp);
                     } else {
-                        updateMessage(id, sender, file.toString('utf8'));
+                        updateMessage(id, sender, file.toString('utf8'), timestamp);
                     }
                 });
             } else {
@@ -63,7 +72,7 @@
                         return response.text();
                     })
                     .then(function (text) {
-                        updateMessage(id, sender, text);
+                        updateMessage(id, sender, text, timestamp);
                     })
             }
         }
@@ -73,7 +82,7 @@
                 console.log('Error in Message event handler: ' + err);
 
             events.forEach(function (event) {
-                insertMessage(event.returnValues._hashId, event.returnValues._hashSender, "<i>Loading...</i>");
+                insertMessage(event.returnValues._hashId, event.returnValues._hashSender, "<i>Loading...</i>", event.returnValues.timestamp);
                 retrieveMessage(event);
             });
         });
