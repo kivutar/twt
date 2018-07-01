@@ -65,27 +65,24 @@
             document.querySelector("#twt-" + id + " .content").innerHTML = content;
         }
 
-        function retrieveMessage(event) {
-            console.log(event);
-            var id = event.returnValues.id;
-            var cid = event.returnValues.cid;
-
-            console.log("Retrieving " + cid);
+        function retrieveMessage(id, cid) {
+            console.log("Retrieving message " + cid);
             if (ipfsNode) {
                 ipfsNode.files.cat(cid, function (err, file) {
                     if (err) {
                         console.log(err);
-                        updateFallback(id, text);
+                        updateMessageFallback(id, text);
                     } else {
                         updateMessage(id, file.toString('utf8'));
                     }
                 });
             } else {
-                updateFallback(id, text);
+                updateMessageFallback(id, text);
             }
         }
 
         function retrieveAvatar(id, cid) {
+            console.log("Retrieving avatar " + cid);
             if (ipfsNode) {
                 ipfsNode.files.cat(cid, function (err, file) {
                     if (err) {
@@ -113,7 +110,7 @@
             });
         }
 
-        function updateFallback(id, text) {
+        function updateMessageFallback(id, text) {
             fetch('https://ipfs.io/ipfs/' + hash)
                 .then(function (response) {
                     return response.text();
@@ -129,7 +126,7 @@
 
             events.forEach(function (event) {
                 insertMessage(event.returnValues.id, event.returnValues.sender, "<i>Loading...</i>", event.returnValues.timestamp);
-                retrieveMessage(event);
+                retrieveMessage(event.returnValues.id, event.returnValues.cid);
                 findAvatar(event.returnValues.id, event.returnValues.sender);
             });
         });
