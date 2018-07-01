@@ -2,7 +2,7 @@
     box-sizing: border-box;
 }
 
-input:focus, button:focus {
+input:focus, button:focus, textarea:focus {
     outline: none;
 }
 
@@ -81,7 +81,7 @@ body {
     padding: 9px 12px;
 }
 
-#twitter-app input {
+#twitter-app textarea {
     display: block;
     padding: 8px;
     margin-bottom: 8px;
@@ -90,11 +90,14 @@ body {
     width: 100%;
     line-height: 20px;
     font-size: 14px;
+    height: 36px;
+    resize: none;
 }
 
-#twitter-app input:focus {
+#twitter-app textarea:focus {
     border: solid 1px #99CDE1;
     box-shadow: 0 0 0 1px #99CDE1;
+    height: 80px;
 }
 
 button {
@@ -106,6 +109,11 @@ button {
     border-radius: 100px;
     color: white;
     float: right;
+    display: none;
+}
+
+#twitter-app textarea:focus+button {
+    display: inline;
 }
 
 button:hover {
