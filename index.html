@@ -9,8 +9,8 @@
         var web3Instance = new Web3(Web3.givenProvider || Web3.currentProvider || 'https://rinkeby.infura.io');
         web3Instance.eth.defaultAccount = web3Instance.eth.coinbase;
 
-        var ABI = [{ "constant": true, "inputs": [{ "name": "", "type": "uint256" }], "name": "hashes", "outputs": [{ "name": "sender", "type": "address" }, { "name": "content", "type": "string" }, { "name": "timestamp", "type": "uint256" }], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": false, "inputs": [{ "name": "_hashContent", "type": "string" }], "name": "post", "outputs": [], "payable": true, "stateMutability": "payable", "type": "function" }, { "constant": true, "inputs": [], "name": "lastHashId", "outputs": [{ "name": "", "type": "uint256" }], "payable": false, "stateMutability": "view", "type": "function" }, { "inputs": [], "payable": false, "stateMutability": "nonpayable", "type": "constructor" }, { "anonymous": false, "inputs": [{ "indexed": true, "name": "_hashSender", "type": "address" }, { "indexed": false, "name": "_hashId", "type": "uint256" }, { "indexed": false, "name": "_hashContent", "type": "string" }, { "indexed": false, "name": "timestamp", "type": "uint256" }], "name": "Message", "type": "event" }]
-        var contractAddress = "0x199acc74a2e6262f583400d64085eb605825dfd5";
+        var ABI = [{ "constant": true, "inputs": [{ "name": "", "type": "uint256" }], "name": "hashes", "outputs": [{ "name": "sender", "type": "address" }, { "name": "content", "type": "string" }, { "name": "timestamp", "type": "uint256" }], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": false, "inputs": [{ "name": "_hashContent", "type": "string" }], "name": "post", "outputs": [], "payable": false, "stateMutability": "nonpayable", "type": "function" }, { "constant": true, "inputs": [], "name": "lastHashId", "outputs": [{ "name": "", "type": "uint256" }], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": false, "inputs": [{ "name": "_hashAvatar", "type": "string" }], "name": "set_avatar", "outputs": [], "payable": false, "stateMutability": "nonpayable", "type": "function" }, { "constant": true, "inputs": [{ "name": "", "type": "address" }], "name": "avatars", "outputs": [{ "name": "", "type": "string" }], "payable": false, "stateMutability": "view", "type": "function" }, { "inputs": [], "payable": false, "stateMutability": "nonpayable", "type": "constructor" }, { "anonymous": false, "inputs": [{ "indexed": true, "name": "sender", "type": "address" }, { "indexed": false, "name": "id", "type": "uint256" }, { "indexed": false, "name": "cid", "type": "string" }, { "indexed": false, "name": "timestamp", "type": "uint256" }], "name": "Message", "type": "event" }, { "anonymous": false, "inputs": [{ "indexed": true, "name": "sender", "type": "address" }, { "indexed": false, "name": "cid", "type": "string" }], "name": "Avatar", "type": "event" }]
+        var contractAddress = "0xc025d369274b8d540c13fc082ab75ebf3366bae0";
         var contract = new web3Instance.eth.Contract(ABI, contractAddress);
 
         const ipfsNode = window.ipfs; /*|| new Ipfs({
@@ -24,13 +24,22 @@
                 //ipfsNode.pin.add(hash, function (err) { console.log(err); });
                 contract.methods.post(hash).send({ from: web3.eth.defaultAccount }, function (err, result) {
                     console.log(err, result);
+                    // TODO empty the input field here
                 });
             });
         }
 
+        // function setAvatar(hash) {
+        //     contract.methods.set_avatar(hash).send({ from: web3.eth.defaultAccount }, function (err, result) {
+        //         console.log(err, result);
+        //     });
+        // }
+
+        //setAvatar("zb2rhoTVGCTVkcUSnqsqHybw8bP7ENvEpRL9e5yBgogWTPm1o");
+
         function formatMessage(id, sender, content, timestamp) {
             return '' +
-                '<img class="avatar" src="http://i.pravatar.cc/48?u=' + sender + '">' +
+                '<img class="avatar" src="avatar.jpg">' +
                 '<div class="sender">' +
                 '<a>Anonymous</a> ' +
                 '<span>@' + sender.substring(2, 10) + '</span>' +
@@ -52,41 +61,66 @@
                 '</div>' + document.getElementById("messages").innerHTML;
         }
 
-        function updateMessage(id, sender, content, timestamp) {
-            document.getElementById("twt-" + id).innerHTML = '' +
-                formatMessage(id, sender, content, timestamp);
+        function updateMessage(id, content) {
+            document.querySelector("#twt-" + id + " .content").innerHTML = content;
         }
 
         function retrieveMessage(event) {
             console.log(event);
-            var id = event.returnValues._hashId;
-            var sender = event.returnValues._hashSender;
-            var hash = event.returnValues._hashContent;
-            var timestamp = event.returnValues.timestamp;
+            var id = event.returnValues.id;
+            var cid = event.returnValues.cid;
 
-            console.log("Retrieving " + hash);
+            console.log("Retrieving " + cid);
             if (ipfsNode) {
-                ipfsNode.files.cat(hash, function (err, file) {
+                ipfsNode.files.cat(cid, function (err, file) {
                     if (err) {
                         console.log(err);
-                        updateFallback(id, sender, text, timestamp);
+                        updateFallback(id, text);
                     } else {
-                        updateMessage(id, sender, file.toString('utf8'), timestamp);
+                        updateMessage(id, file.toString('utf8'));
                     }
                 });
             } else {
-                updateFallback(id, sender, text, timestamp);
+                updateFallback(id, text);
             }
         }
 
-        function updateFallback(id, sender, text, timestamp) {
+        function retrieveAvatar(id, cid) {
+            if (ipfsNode) {
+                ipfsNode.files.cat(cid, function (err, file) {
+                    if (err) {
+                        document.querySelector("#twt-" + id + " .avatar").src = "https://ipfs.io/ipfs/" + cid;
+                    } else {
+                        var blob = new Blob([file]);
+                        var url = window.URL.createObjectURL(blob);
+                        document.querySelector("#twt-" + id + " .avatar").src = url;
+                    }
+                });
+            } else {
+                document.querySelector("#twt-" + id + " .avatar").src = "https://ipfs.io/ipfs/" + cid;
+            }
+        }
+
+        function findAvatar(id, sender) {
+            contract.getPastEvents('Avatar', { fromBlock: 0, toBlock: 'latest', filter: { sender: sender } }, (err, events) => {
+                var cid;
+                events.forEach(event => {
+                    cid = event.returnValues.cid;
+                });
+                if (cid) {
+                    retrieveAvatar(id, cid)
+                }
+            });
+        }
+
+        function updateFallback(id, text) {
             fetch('https://ipfs.io/ipfs/' + hash)
-                    .then(function (response) {
-                        return response.text();
-                    })
-                    .then(function (text) {
-                        updateMessage(id, sender, text, timestamp);
-                    })
+                .then(function (response) {
+                    return response.text();
+                })
+                .then(function (text) {
+                    updateMessage(id, text);
+                })
         }
 
         contract.getPastEvents('Message', { fromBlock: 0, toBlock: 'latest' }, (err, events) => {
@@ -94,8 +128,9 @@
                 console.log('Error in Message event handler: ' + err);
 
             events.forEach(function (event) {
-                insertMessage(event.returnValues._hashId, event.returnValues._hashSender, "<i>Loading...</i>", event.returnValues.timestamp);
+                insertMessage(event.returnValues.id, event.returnValues.sender, "<i>Loading...</i>", event.returnValues.timestamp);
                 retrieveMessage(event);
+                findAvatar(event.returnValues.id, event.returnValues.sender);
             });
         });
     </script>
