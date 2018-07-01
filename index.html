@@ -68,20 +68,25 @@
             if (ipfsNode) {
                 ipfsNode.files.cat(hash, function (err, file) {
                     if (err) {
-                        updateMessage(id, sender, err, timestamp);
+                        console.log(err);
+                        updateFallback(id, sender, text, timestamp);
                     } else {
                         updateMessage(id, sender, file.toString('utf8'), timestamp);
                     }
                 });
             } else {
-                fetch('https://ipfs.io/ipfs/' + hash)
+                updateFallback(id, sender, text, timestamp);
+            }
+        }
+
+        function updateFallback(id, sender, text, timestamp) {
+            fetch('https://ipfs.io/ipfs/' + hash)
                     .then(function (response) {
                         return response.text();
                     })
                     .then(function (text) {
                         updateMessage(id, sender, text, timestamp);
                     })
-            }
         }
 
         contract.getPastEvents('Message', { fromBlock: 0, toBlock: 'latest' }, (err, events) => {
