@@ -68,11 +68,11 @@
         function retrieveMessage(event) {
             console.log(event);
             var id = event.returnValues.id;
-            var hash = event.returnValues.cid;
+            var cid = event.returnValues.cid;
 
-            console.log("Retrieving " + hash);
+            console.log("Retrieving " + cid);
             if (ipfsNode) {
-                ipfsNode.files.cat(hash, function (err, file) {
+                ipfsNode.files.cat(cid, function (err, file) {
                     if (err) {
                         console.log(err);
                         updateFallback(id, text);
@@ -85,13 +85,29 @@
             }
         }
 
-        function retrieveAvatar(id, sender) {
+        function retrieveAvatar(id, cid) {
+            if (ipfsNode) {
+                    ipfsNode.files.cat(cid, function (err, file) {
+                        if (err) {
+                            document.querySelector("#twt-" + id + " .avatar").src = "https://ipfs.io/ipfs/" + cid;
+                        } else {
+                            var blob = new Blob([file]);
+                            var url = window.URL.createObjectURL(blob);
+                            document.querySelector("#twt-" + id + " .avatar").src = url;
+                        }
+                    });
+                } else {
+                    document.querySelector("#twt-" + id + " .avatar").src = "https://ipfs.io/ipfs/" + cid;
+                }
+        }
+
+        function findAvatar(id, sender) {
             contract.getPastEvents('Avatar', { fromBlock: 0, toBlock: 'latest', filter: { sender: sender } }, (err, events) => {
-                var avatar = "";
+                var cid = "";
                 events.forEach(event => {
-                    avatar = event.returnValues.cid;
+                    cid = event.returnValues.cid;
                 });
-                document.querySelector("#twt-" + id + " .avatar").src = "https://ipfs.io/ipfs/" + avatar;
+                retrieveAvatar(id, cid)
             });
         }
 
@@ -112,7 +128,7 @@
             events.forEach(function (event) {
                 insertMessage(event.returnValues.id, event.returnValues.sender, "<i>Loading...</i>", event.returnValues.timestamp);
                 retrieveMessage(event);
-                retrieveAvatar(event.returnValues.id, event.returnValues.sender);
+                findAvatar(event.returnValues.id, event.returnValues.sender);
             });
         });
     </script>
