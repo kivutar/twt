@@ -53,39 +53,37 @@
                 '</div>' + document.getElementById("messages").innerHTML;
         }
 
-        function updateMessage(id, sender, content, timestamp) {
+        function updateMessage(id, content) {
             document.querySelector("#twt-" + id + " .content").innerHTML = content;
         }
 
         function retrieveMessage(event) {
             console.log(event);
             var id = event.returnValues.id;
-            var sender = event.returnValues.sender;
             var hash = event.returnValues.cid;
-            var timestamp = event.returnValues.timestamp;
 
             console.log("Retrieving " + hash);
             if (ipfsNode) {
                 ipfsNode.files.cat(hash, function (err, file) {
                     if (err) {
                         console.log(err);
-                        updateFallback(id, sender, text, timestamp);
+                        updateFallback(id, text);
                     } else {
-                        updateMessage(id, sender, file.toString('utf8'), timestamp);
+                        updateMessage(id, file.toString('utf8'));
                     }
                 });
             } else {
-                updateFallback(id, sender, text, timestamp);
+                updateFallback(id, text);
             }
         }
 
-        function updateFallback(id, sender, text, timestamp) {
+        function updateFallback(id, text) {
             fetch('https://ipfs.io/ipfs/' + hash)
                     .then(function (response) {
                         return response.text();
                     })
                     .then(function (text) {
-                        updateMessage(id, sender, text, timestamp);
+                        updateMessage(id, text);
                     })
         }
 
