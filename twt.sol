@@ -1,7 +1,8 @@
 pragma solidity ^0.4.11;
 contract Contract {
 
-    event Message(address indexed _hashSender, uint _hashId, string _hashContent, uint timestamp);
+    event Message(address indexed sender, uint id, string cid, uint timestamp);
+    event Avatar(address indexed sender, string cid);
 
     struct Hash {
         address sender;
@@ -9,6 +10,7 @@ contract Contract {
         uint timestamp;
     }
 
+    mapping(address => string) public avatars;
     mapping(uint => Hash) public hashes;
     uint public lastHashId;
 
@@ -22,5 +24,11 @@ contract Contract {
         hashes[id].timestamp = block.timestamp;
 
         emit Message(hashes[id].sender, id, hashes[id].content, hashes[id].timestamp);
+    }
+
+    function set_avatar(string _hashAvatar) public {
+        avatars[msg.sender] = _hashAvatar;
+
+        emit Avatar(msg.sender, _hashAvatar);
     }
 }
