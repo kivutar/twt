@@ -31,23 +31,37 @@
         function insertMessage(id, sender, content, timestamp) {
             document.getElementById("messages").innerHTML = '' +
                 '<div id="twt-' + id + '">' +
+                '<img class="avatar" src="http://i.pravatar.cc/48?u=' + sender + '">' +
                 '<div class="sender">' +
                 '<a>Anonymous</a> ' +
                 '<span>@' + sender.substring(2, 10) + '</span>' +
                 ' · <span>' + new Date(timestamp * 1000).toLocaleString() + '</span>' +
                 '</div>' +
                 '<div class="content">' + content + '</div>' +
+                '<div class="actions">' +
+                '<a href=""><i class="fas fa-comment-alt"></i></a>' +
+                '<a href=""><i class="fas fa-retweet"></i></a>' +
+                '<a href=""><i class="fas fa-thumbtack"></i></a>' +
+                '<a href=""><i class="fas fa-envelope"></i></a>' +
+                '</div>' +
                 '</div>' + document.getElementById("messages").innerHTML;
         }
 
         function updateMessage(id, sender, content, timestamp) {
             document.getElementById("twt-" + id).innerHTML = '' +
+                '<img class="avatar" src="http://i.pravatar.cc/48?u=' + sender + '">' +
                 '<div class="sender">' +
                 '<a>Anonymous</a> ' +
                 '<span>@' + sender.substring(2, 10) + '</span>' +
                 ' · <span>' + new Date(timestamp * 1000).toLocaleString() + '</span>' +
                 '</div>' +
-                '<div class="content">' + content + '</div>';
+                '<div class="content"><div class="content">' + content + '</div>' +
+                '<div class="actions">' +
+                '<a href=""><i class="fas fa-comment-alt"></i></a>' +
+                '<a href=""><i class="fas fa-retweet"></i></a>' +
+                '<a href=""><i class="fas fa-thumbtack"></i></a>' +
+                '<a href=""><i class="fas fa-envelope"></i></a>' +
+                '</div>';
         }
 
         function retrieveMessage(event) {
@@ -87,6 +101,8 @@
             });
         });
     </script>
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.1.0/css/all.css" integrity="sha384-lKuwvrZot6UHsBSfcMvOkWwlCMgc0TaWr+30HWe3a4ltaBwTZhyTEggF5tJv8tbt"
+        crossorigin="anonymous">
     <link rel="stylesheet" href="style.css">
 </head>
 

@@ -22,14 +22,15 @@ body {
 
 .container {
     background: white;
-    max-width: 564px;
+    max-width: 590px;
     margin: 0 auto;
 }
 
 #messages>div {
     border-bottom: #e6ecf0 solid 1px;
-    padding: 9px 12px;
+    padding: 9px 12px 9px 66px;
     line-height: 20px;
+    position: relative;
 }
 
 #messages>div:hover {
@@ -44,6 +45,34 @@ body {
     color: #657786;
     font-family: "Menlo", monospace;
     text-transform: lowercase;
+}
+
+.avatar {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    position: absolute;
+    left: 9px;
+}
+
+.actions {
+    margin-top: 9px;
+    font-weight: bold;
+}
+
+.actions i {
+    margin-right: 10px;
+}
+
+.actions a {
+    color: #657786;
+    opacity: 0.5;
+    padding-right: 50px;
+    text-decoration: none;
+}
+
+.actions a:hover {
+    opacity: 1;
 }
 
 #twitter-app {
