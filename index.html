@@ -39,7 +39,7 @@
 
         function formatMessage(id, sender, content, timestamp) {
             return '' +
-                '<img class="avatar" src="">' +
+                '<img class="avatar" src="avatar.jpg">' +
                 '<div class="sender">' +
                 '<a>Anonymous</a> ' +
                 '<span>@' + sender.substring(2, 10) + '</span>' +
@@ -87,27 +87,29 @@
 
         function retrieveAvatar(id, cid) {
             if (ipfsNode) {
-                    ipfsNode.files.cat(cid, function (err, file) {
-                        if (err) {
-                            document.querySelector("#twt-" + id + " .avatar").src = "https://ipfs.io/ipfs/" + cid;
-                        } else {
-                            var blob = new Blob([file]);
-                            var url = window.URL.createObjectURL(blob);
-                            document.querySelector("#twt-" + id + " .avatar").src = url;
-                        }
-                    });
-                } else {
-                    document.querySelector("#twt-" + id + " .avatar").src = "https://ipfs.io/ipfs/" + cid;
-                }
+                ipfsNode.files.cat(cid, function (err, file) {
+                    if (err) {
+                        document.querySelector("#twt-" + id + " .avatar").src = "https://ipfs.io/ipfs/" + cid;
+                    } else {
+                        var blob = new Blob([file]);
+                        var url = window.URL.createObjectURL(blob);
+                        document.querySelector("#twt-" + id + " .avatar").src = url;
+                    }
+                });
+            } else {
+                document.querySelector("#twt-" + id + " .avatar").src = "https://ipfs.io/ipfs/" + cid;
+            }
         }
 
         function findAvatar(id, sender) {
             contract.getPastEvents('Avatar', { fromBlock: 0, toBlock: 'latest', filter: { sender: sender } }, (err, events) => {
-                var cid = "";
+                var cid;
                 events.forEach(event => {
                     cid = event.returnValues.cid;
                 });
-                retrieveAvatar(id, cid)
+                if (cid) {
+                    retrieveAvatar(id, cid)
+                }
             });
         }
 
