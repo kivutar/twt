@@ -46,7 +46,7 @@
                 ' · <span>' + new Date(timestamp * 1000).toLocaleString() + '</span>' +
                 '</div>' +
                 '<div class="content">' + content + '</div>' +
-                (img ? '<img class="image" src="https://ipfs.io/ipfs/'+img+'">' : '') +
+                (img ? '<img class="image" src="image.png">' : '') +
                 '<div class="actions">' +
                 '<a href=""><i class="fas fa-comment-alt"></i></a>' +
                 '<a href=""><i class="fas fa-retweet"></i></a>' +
@@ -100,6 +100,23 @@
             }
         }
 
+        function retrieveImage(id, cid) {
+            console.log("Retrieving image " + cid);
+            if (ipfsNode) {
+                ipfsNode.files.cat(cid, function (err, file) {
+                    if (err) {
+                        document.querySelector("#twt-" + id + " .image").src = "https://ipfs.io/ipfs/" + cid;
+                    } else {
+                        var blob = new Blob([file]);
+                        var url = window.URL.createObjectURL(blob);
+                        document.querySelector("#twt-" + id + " .image").src = url;
+                    }
+                });
+            } else {
+                document.querySelector("#twt-" + id + " .image").src = "https://ipfs.io/ipfs/" + cid;
+            }
+        }
+
         function findAvatar(id, sender) {
             contract.getPastEvents('Avatar', { fromBlock: 0, toBlock: 'latest', filter: { sender: sender } }, (err, events) => {
                 var cid;
@@ -130,6 +147,9 @@
                 insertMessage(event.returnValues.id, event.returnValues.sender, "<i>Loading...</i>", event.returnValues.img, event.returnValues.timestamp);
                 retrieveMessage(event.returnValues.id, event.returnValues.cid);
                 findAvatar(event.returnValues.id, event.returnValues.sender);
+                if (event.returnValues.img) {
+                    retrieveImage(event.returnValues.id, event.returnValues.img);
+                }
             });
         });
     </script>
