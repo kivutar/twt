@@ -110,8 +110,8 @@
             });
         }
 
-        function updateMessageFallback(id, text) {
-            fetch('https://ipfs.io/ipfs/' + hash)
+        function updateMessageFallback(id, cid) {
+            fetch('https://ipfs.io/ipfs/' + cid)
                 .then(function (response) {
                     return response.text();
                 })
