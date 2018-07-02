@@ -9,8 +9,8 @@
         var web3Instance = new Web3(Web3.givenProvider || Web3.currentProvider || 'https://rinkeby.infura.io');
         web3Instance.eth.defaultAccount = web3Instance.eth.coinbase;
 
-        var ABI = [{ "constant": true, "inputs": [{ "name": "", "type": "uint256" }], "name": "hashes", "outputs": [{ "name": "sender", "type": "address" }, { "name": "content", "type": "string" }, { "name": "timestamp", "type": "uint256" }], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": false, "inputs": [{ "name": "_hashContent", "type": "string" }], "name": "post", "outputs": [], "payable": false, "stateMutability": "nonpayable", "type": "function" }, { "constant": true, "inputs": [], "name": "lastHashId", "outputs": [{ "name": "", "type": "uint256" }], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": false, "inputs": [{ "name": "_hashAvatar", "type": "string" }], "name": "set_avatar", "outputs": [], "payable": false, "stateMutability": "nonpayable", "type": "function" }, { "constant": true, "inputs": [{ "name": "", "type": "address" }], "name": "avatars", "outputs": [{ "name": "", "type": "string" }], "payable": false, "stateMutability": "view", "type": "function" }, { "inputs": [], "payable": false, "stateMutability": "nonpayable", "type": "constructor" }, { "anonymous": false, "inputs": [{ "indexed": true, "name": "sender", "type": "address" }, { "indexed": false, "name": "id", "type": "uint256" }, { "indexed": false, "name": "cid", "type": "string" }, { "indexed": false, "name": "timestamp", "type": "uint256" }], "name": "Message", "type": "event" }, { "anonymous": false, "inputs": [{ "indexed": true, "name": "sender", "type": "address" }, { "indexed": false, "name": "cid", "type": "string" }], "name": "Avatar", "type": "event" }]
-        var contractAddress = "0xc025d369274b8d540c13fc082ab75ebf3366bae0";
+        var ABI = [{"constant":false,"inputs":[{"name":"_hashContent","type":"string"},{"name":"_hashImage","type":"string"}],"name":"post","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[{"name":"","type":"uint256"}],"name":"hashes","outputs":[{"name":"sender","type":"address"},{"name":"content","type":"string"},{"name":"image","type":"string"},{"name":"timestamp","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"lastHashId","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"_hashAvatar","type":"string"}],"name":"set_avatar","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[{"name":"","type":"address"}],"name":"avatars","outputs":[{"name":"","type":"string"}],"payable":false,"stateMutability":"view","type":"function"},{"inputs":[],"payable":false,"stateMutability":"nonpayable","type":"constructor"},{"anonymous":false,"inputs":[{"indexed":true,"name":"sender","type":"address"},{"indexed":false,"name":"id","type":"uint256"},{"indexed":false,"name":"cid","type":"string"},{"indexed":false,"name":"img","type":"string"},{"indexed":false,"name":"timestamp","type":"uint256"}],"name":"Message","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"name":"sender","type":"address"},{"indexed":false,"name":"cid","type":"string"}],"name":"Avatar","type":"event"}]
+        var contractAddress = "0x5e626b58388f8b083d6d399f385c901675636b6e";
         var contract = new web3Instance.eth.Contract(ABI, contractAddress);
 
         const ipfsNode = window.ipfs; /*|| new Ipfs({
@@ -22,7 +22,7 @@
                 hash = files[0].hash;
                 console.log('Posting ' + hash);
                 ipfsNode.pin.add(hash, function (err) { console.log(err); });
-                contract.methods.post(hash).send({ from: web3.eth.defaultAccount }, function (err, result) {
+                contract.methods.post(hash, '').send({ from: web3.eth.defaultAccount }, function (err, result) {
                     console.log(err, result);
                     // TODO empty the input field here
                 });
@@ -37,7 +37,7 @@
 
         //setAvatar("zb2rhoTVGCTVkcUSnqsqHybw8bP7ENvEpRL9e5yBgogWTPm1o");
 
-        function formatMessage(id, sender, content, timestamp) {
+        function formatMessage(id, sender, content, img, timestamp) {
             return '' +
                 '<img class="avatar" src="avatar.jpg">' +
                 '<div class="sender">' +
@@ -46,6 +46,7 @@
                 ' · <span>' + new Date(timestamp * 1000).toLocaleString() + '</span>' +
                 '</div>' +
                 '<div class="content">' + content + '</div>' +
+                (img ? '<img class="image" src="https://ipfs.io/ipfs/'+img+'">' : '') +
                 '<div class="actions">' +
                 '<a href=""><i class="fas fa-comment-alt"></i></a>' +
                 '<a href=""><i class="fas fa-retweet"></i></a>' +
@@ -55,10 +56,10 @@
                 '</div>';
         }
 
-        function insertMessage(id, sender, content, timestamp) {
+        function insertMessage(id, sender, content, img, timestamp) {
             document.getElementById("messages").innerHTML = '' +
                 '<div id="twt-' + id + '">' +
-                formatMessage(id, sender, content, timestamp) +
+                formatMessage(id, sender, content, img, timestamp) +
                 '</div>' + document.getElementById("messages").innerHTML;
         }
 
@@ -126,7 +127,7 @@
                 console.log('Error in Message event handler: ' + err);
 
             events.forEach(function (event) {
-                insertMessage(event.returnValues.id, event.returnValues.sender, "<i>Loading...</i>", event.returnValues.timestamp);
+                insertMessage(event.returnValues.id, event.returnValues.sender, "<i>Loading...</i>", event.returnValues.img, event.returnValues.timestamp);
                 retrieveMessage(event.returnValues.id, event.returnValues.cid);
                 findAvatar(event.returnValues.id, event.returnValues.sender);
             });

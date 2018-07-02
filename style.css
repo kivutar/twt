@@ -47,6 +47,12 @@ body {
     text-transform: lowercase;
 }
 
+#messages .image {
+    width: 100%;
+    border-radius: 5px;
+    margin-top: 9px;
+}
+
 .avatar {
     width: 48px;
     height: 48px;
@@ -109,11 +115,6 @@ button {
     border-radius: 100px;
     color: white;
     float: right;
-    display: none;
-}
-
-#twitter-app textarea:focus+button {
-    display: inline;
 }
 
 button:hover {
