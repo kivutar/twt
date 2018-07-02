@@ -21,7 +21,7 @@
             ipfsNode.files.add({ path: '/dummy', content: Buffer.from(message) }, (err, files) => {
                 hash = files[0].hash;
                 console.log('Posting ' + hash);
-                //ipfsNode.pin.add(hash, function (err) { console.log(err); });
+                ipfsNode.pin.add(hash, function (err) { console.log(err); });
                 contract.methods.post(hash).send({ from: web3.eth.defaultAccount }, function (err, result) {
                     console.log(err, result);
                     // TODO empty the input field here
@@ -49,6 +49,7 @@
                 '<div class="actions">' +
                 '<a href=""><i class="fas fa-comment-alt"></i></a>' +
                 '<a href=""><i class="fas fa-retweet"></i></a>' +
+                '<a href=""><i class="fas fa-heart"></i></a>' +
                 '<a href=""><i class="fas fa-thumbtack"></i></a>' +
                 '<a href=""><i class="fas fa-envelope"></i></a>' +
                 '</div>';
