@@ -17,16 +17,14 @@
             repo: 'twt',
         });*/
 
-        function post(message) {
-            ipfsNode.files.add({ path: '/dummy', content: Buffer.from(message) }, (err, files) => {
-                hash = files[0].hash;
-                console.log('Posting ' + hash);
-                ipfsNode.pin.add(hash, function (err) { console.log(err); });
-                contract.methods.post(hash, '').send({ from: web3Instance.eth.defaultAccount }, function (err, result) {
-                    console.log(err, result);
-                    // TODO empty the input field here
-                });
-            });
+        async function post(message) {
+            var err, files = await ipfsNode.files.add({ path: '/dummy', content: Buffer.from(message) });
+            hash = files[0].hash;
+            console.log('Posting ' + hash);
+            ipfsNode.pin.add(hash, function (err) { console.log(err); });
+            var err, result = await contract.methods.post(hash, '').send({ from: web3Instance.eth.defaultAccount });
+            console.log(err, result);
+            // TODO empty the input field here
         }
 
         // function setAvatar(hash) {
@@ -67,43 +65,40 @@
             document.querySelector("#twt-" + id + " .content").innerHTML = content;
         }
 
-        function retrieveMessage(id, cid) {
+        async function retrieveMessage(id, cid) {
             console.log("Retrieving message " + cid);
             if (ipfsNode) {
-                ipfsNode.files.cat(cid, function (err, file) {
-                    if (err) {
-                        console.log(err);
-                        updateMessageFallback(id, cid);
-                    } else {
-                        updateMessage(id, file.toString('utf8'));
-                    }
-                });
+                var err, file = await ipfsNode.files.cat(cid);
+                if (err) {
+                    console.log(err);
+                    updateMessageFallback(id, cid);
+                } else {
+                    updateMessage(id, file.toString('utf8'));
+                }
             } else {
                 updateMessageFallback(id, cid);
             }
         }
 
-        function retrieveImage(id, cid, selector) {
+        async function retrieveImage(id, cid, selector) {
             console.log("Retrieving image " + cid);
             if (ipfsNode) {
-                ipfsNode.files.cat(cid, function (err, file) {
-                    if (err) {
-                        document.querySelector(selector).src = "https://ipfs.io/ipfs/" + cid;
-                    } else {
-                        var blob = new Blob([file]);
-                        var url = window.URL.createObjectURL(blob);
-                        document.querySelector(selector).src = url;
-                    }
-                });
+                var err, file = await ipfsNode.files.cat(cid);
+                if (err) {
+                    document.querySelector(selector).src = "https://ipfs.io/ipfs/" + cid;
+                } else {
+                    var blob = new Blob([file]);
+                    var url = window.URL.createObjectURL(blob);
+                    document.querySelector(selector).src = url;
+                }
             } else {
                 document.querySelector(selector).src = "https://ipfs.io/ipfs/" + cid;
             }
         }
 
-        function findAvatar(id, sender) {
-            contract.methods.avatars(sender).call({ from: web3Instance.eth.defaultAccount }, function (err, cid) {
-                cid && retrieveImage(id, cid, "#twt-" + id + " .avatar");
-            });
+        async function findAvatar(id, sender) {
+            var err, cid = await contract.methods.avatars(sender).call({ from: web3Instance.eth.defaultAccount });
+            cid && retrieveImage(id, cid, "#twt-" + id + " .avatar");
         }
 
         function updateMessageFallback(id, cid) {
@@ -116,11 +111,11 @@
                 })
         }
 
-        contract.getPastEvents('Message', { fromBlock: 0, toBlock: 'latest' }, (err, events) => {
+        contract.getPastEvents('Message', { fromBlock: 0, toBlock: 'latest' }, (err, messages) => {
             if (err)
                 console.log('Error in Message event handler: ' + err);
 
-            events.forEach(function (event) {
+            messages.forEach(function (event) {
                 var id = event.returnValues.id;
                 var sender = event.returnValues.sender;
                 var img = event.returnValues.img;
