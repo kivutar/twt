@@ -9,7 +9,7 @@
         var web3Instance = new Web3(Web3.givenProvider || Web3.currentProvider || 'https://rinkeby.infura.io');
         web3Instance.eth.defaultAccount = web3Instance.eth.coinbase;
 
-        var ABI = [{"constant":false,"inputs":[{"name":"_hashContent","type":"string"},{"name":"_hashImage","type":"string"}],"name":"post","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[{"name":"","type":"uint256"}],"name":"hashes","outputs":[{"name":"sender","type":"address"},{"name":"content","type":"string"},{"name":"image","type":"string"},{"name":"timestamp","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"lastHashId","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"_hashAvatar","type":"string"}],"name":"set_avatar","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[{"name":"","type":"address"}],"name":"avatars","outputs":[{"name":"","type":"string"}],"payable":false,"stateMutability":"view","type":"function"},{"inputs":[],"payable":false,"stateMutability":"nonpayable","type":"constructor"},{"anonymous":false,"inputs":[{"indexed":true,"name":"sender","type":"address"},{"indexed":false,"name":"id","type":"uint256"},{"indexed":false,"name":"cid","type":"string"},{"indexed":false,"name":"img","type":"string"},{"indexed":false,"name":"timestamp","type":"uint256"}],"name":"Message","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"name":"sender","type":"address"},{"indexed":false,"name":"cid","type":"string"}],"name":"Avatar","type":"event"}]
+        var ABI = [{ "constant": false, "inputs": [{ "name": "_hashContent", "type": "string" }, { "name": "_hashImage", "type": "string" }], "name": "post", "outputs": [], "payable": false, "stateMutability": "nonpayable", "type": "function" }, { "constant": true, "inputs": [{ "name": "", "type": "uint256" }], "name": "hashes", "outputs": [{ "name": "sender", "type": "address" }, { "name": "content", "type": "string" }, { "name": "image", "type": "string" }, { "name": "timestamp", "type": "uint256" }], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": true, "inputs": [], "name": "lastHashId", "outputs": [{ "name": "", "type": "uint256" }], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": false, "inputs": [{ "name": "_hashAvatar", "type": "string" }], "name": "set_avatar", "outputs": [], "payable": false, "stateMutability": "nonpayable", "type": "function" }, { "constant": true, "inputs": [{ "name": "", "type": "address" }], "name": "avatars", "outputs": [{ "name": "", "type": "string" }], "payable": false, "stateMutability": "view", "type": "function" }, { "inputs": [], "payable": false, "stateMutability": "nonpayable", "type": "constructor" }, { "anonymous": false, "inputs": [{ "indexed": true, "name": "sender", "type": "address" }, { "indexed": false, "name": "id", "type": "uint256" }, { "indexed": false, "name": "cid", "type": "string" }, { "indexed": false, "name": "img", "type": "string" }, { "indexed": false, "name": "timestamp", "type": "uint256" }], "name": "Message", "type": "event" }, { "anonymous": false, "inputs": [{ "indexed": true, "name": "sender", "type": "address" }, { "indexed": false, "name": "cid", "type": "string" }], "name": "Avatar", "type": "event" }]
         var contractAddress = "0x5e626b58388f8b083d6d399f385c901675636b6e";
         var contract = new web3Instance.eth.Contract(ABI, contractAddress);
 
@@ -118,14 +118,8 @@
         }
 
         function findAvatar(id, sender) {
-            contract.getPastEvents('Avatar', { fromBlock: 0, toBlock: 'latest', filter: { sender: sender } }, (err, events) => {
-                var cid;
-                events.forEach(event => {
-                    cid = event.returnValues.cid;
-                });
-                if (cid) {
-                    retrieveAvatar(id, cid)
-                }
+            contract.methods.avatars(sender).call({ from: web3.eth.defaultAccount }, function (err, cid) {
+                cid && retrieveAvatar(id, cid);
             });
         }
 
