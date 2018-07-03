@@ -12,6 +12,7 @@
         var ABI = [{ "constant": false, "inputs": [{ "name": "_hashContent", "type": "string" }, { "name": "_hashImage", "type": "string" }], "name": "post", "outputs": [], "payable": false, "stateMutability": "nonpayable", "type": "function" }, { "constant": true, "inputs": [{ "name": "", "type": "uint256" }], "name": "hashes", "outputs": [{ "name": "sender", "type": "address" }, { "name": "content", "type": "string" }, { "name": "image", "type": "string" }, { "name": "timestamp", "type": "uint256" }], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": true, "inputs": [], "name": "lastHashId", "outputs": [{ "name": "", "type": "uint256" }], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": false, "inputs": [{ "name": "_hashAvatar", "type": "string" }], "name": "set_avatar", "outputs": [], "payable": false, "stateMutability": "nonpayable", "type": "function" }, { "constant": true, "inputs": [{ "name": "", "type": "address" }], "name": "avatars", "outputs": [{ "name": "", "type": "string" }], "payable": false, "stateMutability": "view", "type": "function" }, { "inputs": [], "payable": false, "stateMutability": "nonpayable", "type": "constructor" }, { "anonymous": false, "inputs": [{ "indexed": true, "name": "sender", "type": "address" }, { "indexed": false, "name": "id", "type": "uint256" }, { "indexed": false, "name": "cid", "type": "string" }, { "indexed": false, "name": "img", "type": "string" }, { "indexed": false, "name": "timestamp", "type": "uint256" }], "name": "Message", "type": "event" }, { "anonymous": false, "inputs": [{ "indexed": true, "name": "sender", "type": "address" }, { "indexed": false, "name": "cid", "type": "string" }], "name": "Avatar", "type": "event" }]
         var contractAddress = "0x5e626b58388f8b083d6d399f385c901675636b6e";
         var contract = new web3Instance.eth.Contract(ABI, contractAddress);
+        var gateway = "https://ipfs.io/ipfs/";
 
         const ipfsNode = window.ipfs; /*|| new Ipfs({
             repo: 'twt',
@@ -85,14 +86,14 @@
             if (ipfsNode) {
                 var err, file = await ipfsNode.files.cat(cid);
                 if (err) {
-                    document.querySelector(selector).src = "https://ipfs.io/ipfs/" + cid;
+                    document.querySelector(selector).src = gateway + cid;
                 } else {
                     var blob = new Blob([file]);
                     var url = window.URL.createObjectURL(blob);
                     document.querySelector(selector).src = url;
                 }
             } else {
-                document.querySelector(selector).src = "https://ipfs.io/ipfs/" + cid;
+                document.querySelector(selector).src = gateway + cid;
             }
         }
 
@@ -102,7 +103,7 @@
         }
 
         function updateMessageFallback(id, cid) {
-            fetch('https://ipfs.io/ipfs/' + cid)
+            fetch(gateway + cid)
                 .then(function (response) {
                     return response.text();
                 })
