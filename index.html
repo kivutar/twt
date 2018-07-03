@@ -23,13 +23,13 @@
             hash = files[0].hash;
             console.log('Posting ' + hash);
             ipfsNode.pin.add(hash, (err) => console.log(err) );
-            var err, result = await contract.methods.post(hash, '').send({ from: web3Instance.eth.defaultAccount });
+            var err, result = await contract.methods.post(hash, '').send({ from: web3.eth.defaultAccount });
             console.log(err, result);
             // TODO empty the input field here
         }
 
         // function setAvatar(hash) {
-        //     contract.methods.set_avatar(hash).send({ from: web3Instance.eth.defaultAccount }, function (err, result) {
+        //     contract.methods.set_avatar(hash).send({ from: web3.eth.defaultAccount }, function (err, result) {
         //         console.log(err, result);
         //     });
         // }
