@@ -83,43 +83,26 @@
             }
         }
 
-        function retrieveAvatar(id, cid) {
-            console.log("Retrieving avatar " + cid);
-            if (ipfsNode) {
-                ipfsNode.files.cat(cid, function (err, file) {
-                    if (err) {
-                        document.querySelector("#twt-" + id + " .avatar").src = "https://ipfs.io/ipfs/" + cid;
-                    } else {
-                        var blob = new Blob([file]);
-                        var url = window.URL.createObjectURL(blob);
-                        document.querySelector("#twt-" + id + " .avatar").src = url;
-                    }
-                });
-            } else {
-                document.querySelector("#twt-" + id + " .avatar").src = "https://ipfs.io/ipfs/" + cid;
-            }
-        }
-
-        function retrieveImage(id, cid) {
+        function retrieveImage(id, cid, selector) {
             console.log("Retrieving image " + cid);
             if (ipfsNode) {
                 ipfsNode.files.cat(cid, function (err, file) {
                     if (err) {
-                        document.querySelector("#twt-" + id + " .image").src = "https://ipfs.io/ipfs/" + cid;
+                        document.querySelector(selector).src = "https://ipfs.io/ipfs/" + cid;
                     } else {
                         var blob = new Blob([file]);
                         var url = window.URL.createObjectURL(blob);
-                        document.querySelector("#twt-" + id + " .image").src = url;
+                        document.querySelector(selector).src = url;
                     }
                 });
             } else {
-                document.querySelector("#twt-" + id + " .image").src = "https://ipfs.io/ipfs/" + cid;
+                document.querySelector(selector).src = "https://ipfs.io/ipfs/" + cid;
             }
         }
 
         function findAvatar(id, sender) {
             contract.methods.avatars(sender).call({ from: web3Instance.eth.defaultAccount }, function (err, cid) {
-                cid && retrieveAvatar(id, cid);
+                cid && retrieveImage(id, cid, "#twt-" + id + " .avatar");
             });
         }
 
@@ -138,11 +121,14 @@
                 console.log('Error in Message event handler: ' + err);
 
             events.forEach(function (event) {
-                insertMessage(event.returnValues.id, event.returnValues.sender, "<i>Loading...</i>", event.returnValues.img, event.returnValues.timestamp);
-                retrieveMessage(event.returnValues.id, event.returnValues.cid);
-                findAvatar(event.returnValues.id, event.returnValues.sender);
-                if (event.returnValues.img) {
-                    retrieveImage(event.returnValues.id, event.returnValues.img);
+                var id = event.returnValues.id;
+                var sender = event.returnValues.sender;
+                var img = event.returnValues.img;
+                insertMessage(id, sender, "<i>Loading...</i>", img, event.returnValues.timestamp);
+                retrieveMessage(id, event.returnValues.cid);
+                findAvatar(id, sender);
+                if (img) {
+                    retrieveImage(id, img, "#twt-" + id + " .image");
                 }
             });
         });
