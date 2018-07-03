@@ -22,7 +22,7 @@
             var err, files = await ipfsNode.files.add({ path: '/dummy', content: Buffer.from(message) });
             hash = files[0].hash;
             console.log('Posting ' + hash);
-            ipfsNode.pin.add(hash, function (err) { console.log(err); });
+            ipfsNode.pin.add(hash, (err) => console.log(err) );
             var err, result = await contract.methods.post(hash, '').send({ from: web3Instance.eth.defaultAccount });
             console.log(err, result);
             // TODO empty the input field here
@@ -98,7 +98,7 @@
         }
 
         async function findAvatar(id, sender) {
-            var err, cid = await contract.methods.avatars(sender).call({ from: web3Instance.eth.defaultAccount });
+            var err, cid = await contract.methods.avatars(sender).call();
             cid && retrieveImage(id, cid, "#twt-" + id + " .avatar");
         }
 
