@@ -22,7 +22,7 @@
                 hash = files[0].hash;
                 console.log('Posting ' + hash);
                 ipfsNode.pin.add(hash, function (err) { console.log(err); });
-                contract.methods.post(hash, '').send({ from: web3.eth.defaultAccount }, function (err, result) {
+                contract.methods.post(hash, '').send({ from: web3Instance.eth.defaultAccount }, function (err, result) {
                     console.log(err, result);
                     // TODO empty the input field here
                 });
@@ -30,7 +30,7 @@
         }
 
         // function setAvatar(hash) {
-        //     contract.methods.set_avatar(hash).send({ from: web3.eth.defaultAccount }, function (err, result) {
+        //     contract.methods.set_avatar(hash).send({ from: web3Instance.eth.defaultAccount }, function (err, result) {
         //         console.log(err, result);
         //     });
         // }
@@ -118,7 +118,7 @@
         }
 
         function findAvatar(id, sender) {
-            contract.methods.avatars(sender).call({ from: web3.eth.defaultAccount }, function (err, cid) {
+            contract.methods.avatars(sender).call({ from: web3Instance.eth.defaultAccount }, function (err, cid) {
                 cid && retrieveAvatar(id, cid);
             });
         }

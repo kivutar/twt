@@ -103,7 +103,7 @@ body {
 #twitter-app textarea:focus {
     border: solid 1px #99CDE1;
     box-shadow: 0 0 0 1px #99CDE1;
-    height: 80px;
+    /*height: 80px;*/
 }
 
 button {
