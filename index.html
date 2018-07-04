@@ -22,7 +22,7 @@
             var err, files = await ipfsNode.files.add({ path: '/dummy', content: Buffer.from(message) });
             hash = files[0].hash;
             console.log('Posting ' + hash);
-            ipfsNode.pin.add(hash, (err) => console.log(err) );
+            ipfsNode.pin.add(hash, (err) => console.log(err));
             var err, result = await contract.methods.post(hash, '').send({ from: web3.eth.defaultAccount });
             console.log(err, result);
             // TODO empty the input field here
@@ -40,7 +40,7 @@
             return '' +
                 '<img class="avatar" src="avatar.jpg">' +
                 '<div class="sender">' +
-                '<a>Anonymous</a> ' +
+                '<a href="?u=' + sender + '">Anonymous</a> ' +
                 '<span>@' + sender.substring(2, 10) + '</span>' +
                 ' · <span>' + new Date(timestamp * 1000).toLocaleString() + '</span>' +
                 '</div>' +
@@ -112,22 +112,27 @@
                 })
         }
 
-        contract.getPastEvents('Message', { fromBlock: 0, toBlock: 'latest' }, (err, messages) => {
-            if (err)
-                console.log('Error in Message event handler: ' + err);
-
-            messages.forEach(function (event) {
-                var id = event.returnValues.id;
-                var sender = event.returnValues.sender;
-                var img = event.returnValues.img;
-                insertMessage(id, sender, "<i>Loading...</i>", img, event.returnValues.timestamp);
-                retrieveMessage(id, event.returnValues.cid);
-                findAvatar(id, sender);
-                if (img) {
-                    retrieveImage(id, img, "#twt-" + id + " .image");
-                }
+        function buildTweetList(filter) {
+            contract.getPastEvents('Message', { fromBlock: 0, filter: filter }, (err, messages) => {
+                messages.forEach(function (event) {
+                    var id = event.returnValues.id;
+                    var sender = event.returnValues.sender;
+                    var img = event.returnValues.img;
+                    insertMessage(id, sender, "<i>Loading...</i>", img, event.returnValues.timestamp);
+                    retrieveMessage(id, event.returnValues.cid);
+                    findAvatar(id, sender);
+                    if (img) {
+                        retrieveImage(id, img, "#twt-" + id + " .image");
+                    }
+                });
             });
-        });
+        }
+
+        if (new URLSearchParams(window.location.search).get('u')) {
+            buildTweetList({ sender: u });
+        } else {
+            buildTweetList({});
+        }
     </script>
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.1.0/css/all.css" integrity="sha384-lKuwvrZot6UHsBSfcMvOkWwlCMgc0TaWr+30HWe3a4ltaBwTZhyTEggF5tJv8tbt"
         crossorigin="anonymous">
