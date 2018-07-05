@@ -134,9 +134,12 @@ nav {
     resize: none;
 }
 
-#form textarea:focus, #form textarea.expanded {
+#form textarea:focus {
     border: solid 1px var(--primary-color-light);
     box-shadow: 0 0 0 4px var(--primary-color-superlight);
+}
+
+#form textarea.expanded {
     height: 92px;
 }
 
