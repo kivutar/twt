@@ -36,6 +36,21 @@
 
         //setAvatar("zb2rhoTVGCTVkcUSnqsqHybw8bP7ENvEpRL9e5yBgogWTPm1o");
 
+        function previewFile() {
+            var file = document.querySelector('input[type=file]').files[0];
+            var reader = new FileReader();
+
+            reader.addEventListener("load", function () {
+                document.querySelector(".preview-container").innerHTML += `<img class="preview" src="">`;
+                var preview = document.querySelector('img.preview');
+                preview.src = reader.result;
+            }, false);
+
+            if (file) {
+                reader.readAsDataURL(file);
+            }
+        }
+
         function formatMessage(id, sender, content, img, timestamp) {
             return '' +
                 '<img class="avatar" src="avatar.jpg">' +
@@ -147,7 +162,14 @@
                 v-bind:class="{ expanded: message || hasFocus }"
                 :placeholder="placeholder">
             </textarea>
-            <button v-on:click="submitPost()" v-if="message || hasFocus" :disabled="!message">Post</button>
+            <input id="file-upload" type="file" v-on:change="previewFile()" v-model="attachment" />
+            <label for="file-upload" class="custom-file-upload pull-left"><i class="fas fa-image"></i></label>
+            <div class="preview-container pull-left"></div>
+            <button
+                class="pull-right"
+                v-on:click="submitPost()"
+                v-if="message || attachment || hasFocus"
+                :disabled="!message && ! attachment">Post</button>
         </div>
         <div id="messages"></div>
     </div>
@@ -156,11 +178,12 @@
             el: '#form',
             data: {
                 message: '',
+                attachment: '',
                 placeholder: "What's on your mind?",
                 hasFocus: false
             },
             methods: {
-                submitPost: function() {
+                submitPost: function () {
                     post($data.message)
                 }
             }
