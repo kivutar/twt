@@ -13,28 +13,38 @@ input:focus, button:focus, textarea:focus {
 }
 
 body {
-    background: #e6ecf0;
+    background: #f4f4f6;
+    color: #24292e;
     margin: 0;
-    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-    font-size: 14px;
+    font-family: apple-system, system-ui, "Segoe UI", Helvetica, Arial, sans-serif;
+    font-size: 16px;
+    line-height: 24px;
     -webkit-font-smoothing: antialiased;
+}
+
+body, button, div, p, textarea {
+    line-height: 24px;
+}
+
+nav {
+    background: #3675a8;
+    min-height: 50px;
 }
 
 .container {
     background: white;
-    max-width: 590px;
+    max-width: 640px;
     margin: 0 auto;
 }
 
 #messages>div {
-    border-bottom: #e6ecf0 solid 1px;
-    padding: 9px 12px 9px 66px;
-    line-height: 20px;
+    border-bottom: #f4f4f6 solid 1px;
+    padding: 12px 12px 12px 70px;
     position: relative;
 }
 
 #messages>div:hover {
-    background: #f5f8fa;
+    background: #fdfbfb;
 }
 
 #messages .sender a {
@@ -44,12 +54,12 @@ body {
 }
 
 #messages .sender a:hover {
-    color: #1DA1F2;
+    color: #3675a8;
     text-decoration: underline;
 }
 
 #messages .sender span {
-    color: #657786;
+    color: #d0d0d0;
     font-family: "Menlo", monospace;
     text-transform: lowercase;
 }
@@ -57,75 +67,74 @@ body {
 #messages .image {
     width: 100%;
     border-radius: 5px;
-    margin-top: 9px;
+    margin-top: 12px;
 }
 
 .avatar {
     width: 48px;
     height: 48px;
-    border-radius: 50%;
+    border-radius: 5px;
     position: absolute;
-    left: 9px;
+    left: 12px;
 }
 
 .actions {
-    margin-top: 9px;
+    margin-top: 12px;
     font-weight: bold;
 }
 
 .actions i {
-    margin-right: 10px;
+    margin-right: 12px;
 }
 
 .actions a {
-    color: #657786;
-    opacity: 0.5;
+    color: #d0d0d0;
+    opacity: 1;
     padding-right: 50px;
     text-decoration: none;
 }
 
 .actions a:hover {
-    opacity: 1;
+    color: #3675a8;
 }
 
 #twitter-app {
-    background: #e5f2f7;
-    border-bottom: #e6ecf0 solid 1px;
-    padding: 9px 12px;
+    background: #efefef;
+    border-bottom: #efefef solid 1px;
+    padding: 12px;
 }
 
 #twitter-app textarea {
     display: block;
     padding: 8px;
-    margin-bottom: 8px;
-    border: solid 1px rgb(191, 224, 236);
-    border-radius: 8px;
+    margin-bottom: 12px;
+    border: solid 1px #63a3d6;
+    border-radius: 5px;
     width: 100%;
-    line-height: 20px;
-    font-size: 14px;
-    height: 36px;
+    font-size: 16px;
+    height: 40px;
     resize: none;
 }
 
 #twitter-app textarea:focus {
-    border: solid 1px #99CDE1;
-    box-shadow: 0 0 0 1px #99CDE1;
+    border: solid 1px #63a3d6;
+    box-shadow: 0 0 0 2px #b1dcff;
     /*height: 80px;*/
 }
 
 button {
-    background: #329CC3;
-    border: 1px solid #329CC3;
+    background: white;
+    border: 1px solid #3675a8;
     padding: 6px 16px;
-    line-height: 20px;
-    font-size: 14px;
-    border-radius: 100px;
-    color: white;
+    font-size: 16px;
+    border-radius: 5px;
+    color: #3675a8;
     float: right;
 }
 
 button:hover {
-    background: #0084B4;
-    border: 1px solid #0084B4;
+    background: #3675a8;
+    border: 1px solid #3675a8;
+    color: white;
     cursor: pointer;
 }
