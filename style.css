@@ -2,6 +2,18 @@
     box-sizing: border-box;
 }
 
+:root {
+    --bg-color-light: #fdfbfd;
+    --bg-color: #f4f4f6;
+    --bg-color-dark: #efeff1;
+    --primary-color: #3675a8;
+    --primary-color-light: #63a3d6;
+    --primary-color-superlight: #b1dcff;
+    --text-color: #24292e;
+    --text-color-dark: black;
+    --text-color-hinted: #d0d0d0;
+}
+
 input:focus, button:focus, textarea:focus {
     outline: none;
 }
@@ -13,21 +25,21 @@ input:focus, button:focus, textarea:focus {
 }
 
 body {
-    background: #f4f4f6;
-    color: #24292e;
+    background: var(--bg-color);
+    color: var(--text-color);
     margin: 0;
     font-family: apple-system, system-ui, "Segoe UI", Helvetica, Arial, sans-serif;
     font-size: 16px;
-    line-height: 24px;
     -webkit-font-smoothing: antialiased;
 }
 
 body, button, div, p, textarea {
     line-height: 24px;
+    font-size: 16px;
 }
 
 nav {
-    background: #3675a8;
+    background: var(--primary-color);
     min-height: 50px;
 }
 
@@ -38,29 +50,32 @@ nav {
 }
 
 #messages>div {
-    border-bottom: #f4f4f6 solid 1px;
+    border-bottom: var(--bg-color) solid 1px;
     padding: 12px 12px 12px 70px;
     position: relative;
 }
 
 #messages>div:hover {
-    background: #fdfbfb;
+    background: var(--bg-color-light);
+}
+
+#messages .sender {
+    color: var(--primary-color);
 }
 
 #messages .sender a {
     font-weight: bold;
-    color: black;
+    color: var(--text-color-dark);
     text-decoration: none;
 }
 
 #messages .sender a:hover {
-    color: #3675a8;
+    color: var(--primary-color);
     text-decoration: underline;
 }
 
 #messages .sender span {
-    color: #d0d0d0;
-    font-family: "Menlo", monospace;
+    color: var(--text-color-hinted);
     text-transform: lowercase;
 }
 
@@ -88,19 +103,19 @@ nav {
 }
 
 .actions a {
-    color: #d0d0d0;
+    color: var(--text-color-hinted);
     opacity: 1;
     padding-right: 50px;
     text-decoration: none;
 }
 
 .actions a:hover {
-    color: #3675a8;
+    color: var(--primary-color);
 }
 
 #twitter-app {
-    background: #efefef;
-    border-bottom: #efefef solid 1px;
+    background: var(--bg-color-dark);
+    border-bottom: var(--bg-color-dark) solid 1px;
     padding: 12px;
 }
 
@@ -108,33 +123,31 @@ nav {
     display: block;
     padding: 8px;
     margin-bottom: 12px;
-    border: solid 1px #63a3d6;
+    border: solid 1px var(--primary-color-light);
     border-radius: 5px;
     width: 100%;
-    font-size: 16px;
     height: 40px;
     resize: none;
 }
 
 #twitter-app textarea:focus {
-    border: solid 1px #63a3d6;
-    box-shadow: 0 0 0 2px #b1dcff;
+    border: solid 1px var(--primary-color-light);
+    box-shadow: 0 0 0 4px var(--primary-color-superlight);
     /*height: 80px;*/
 }
 
 button {
     background: white;
-    border: 1px solid #3675a8;
+    border: 1px solid var(--primary-color);
     padding: 6px 16px;
-    font-size: 16px;
     border-radius: 5px;
-    color: #3675a8;
+    color: var(--primary-color);
     float: right;
 }
 
 button:hover {
-    background: #3675a8;
-    border: 1px solid #3675a8;
+    background: var(--primary-color);
+    border: 1px solid var(--primary-color);
     color: white;
     cursor: pointer;
 }
