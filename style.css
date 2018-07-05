@@ -150,9 +150,15 @@ nav {
     margin-top: 12px;
 }
 
-#form button:hover {
+#form button:hover:enabled {
     background: var(--primary-color);
     border: 1px solid var(--primary-color);
     color: white;
     cursor: pointer;
+}
+
+#form button:disabled {
+    background: white;
+    border: 1px solid var(--text-color-hinted);
+    color: var(--text-color-hinted);
 }

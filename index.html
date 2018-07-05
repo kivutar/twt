@@ -147,7 +147,7 @@
                 v-bind:class="{ expanded: message || hasFocus }"
                 :placeholder="placeholder">
             </textarea>
-            <button v-on:click="submitPost()" v-if="message || hasFocus">Post</button>
+            <button v-on:click="submitPost()" v-if="message || hasFocus" :disabled="!message">Post</button>
         </div>
         <div id="messages"></div>
     </div>
