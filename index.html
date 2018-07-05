@@ -140,7 +140,7 @@
     <nav></nav>
     <div class="container">
         <div id="twitter-app" class="clearfix">
-            <textarea v-model="message"></textarea>
+            <textarea v-model="message" v-bind:class="{ expanded: message != '' }" :placeholder="placeholder"></textarea>
             <button v-on:click="submitPost()">Post</button>
         </div>
         <div id="messages"></div>
@@ -149,7 +149,8 @@
         var app6 = new Vue({
             el: '#twitter-app',
             data: {
-                message: ''
+                message: '',
+                placeholder: "What's on your mind?"
             },
             methods: {
                 submitPost: function () {

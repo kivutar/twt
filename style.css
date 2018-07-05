@@ -130,10 +130,10 @@ nav {
     resize: none;
 }
 
-#twitter-app textarea:focus {
+#twitter-app textarea:focus, #twitter-app textarea.expanded {
     border: solid 1px var(--primary-color-light);
     box-shadow: 0 0 0 4px var(--primary-color-superlight);
-    /*height: 80px;*/
+    height: 92px;
 }
 
 button {
