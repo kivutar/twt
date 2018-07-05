@@ -18,14 +18,41 @@
             repo: 'twt',
         });*/
 
+        const readUploadedFileAsArrayBuffer = (file) => {
+            const r = new FileReader();
+
+            return new Promise((resolve, reject) => {
+                r.onerror = () => {
+                    r.abort();
+                    reject(new DOMException("Problem parsing input file."));
+                };
+
+                r.onload = () => {
+                    resolve(r.result);
+                };
+                r.readAsArrayBuffer(file);
+            });
+        };
+
         async function post(message) {
-            var err, files = await ipfsNode.files.add({ path: '/dummy', content: Buffer.from(message) });
-            hash = files[0].hash;
-            console.log('Posting ' + hash);
-            ipfsNode.pin.add(hash, (err) => console.log(err));
-            var err, result = await contract.methods.post(hash, '').send({ from: web3.eth.defaultAccount });
+            var messageHash, attachmentHash = '';
+            if (message) {
+                var err, files = await ipfsNode.files.add({ path: '/message', content: Buffer.from(message) });
+                messageHash = files[0].hash;
+                ipfsNode.pin.add(messageHash, (err) => console.log(err));
+            }
+
+            var file = document.querySelector('input[type=file]').files[0];
+            if (file) {
+                var buf = await readUploadedFileAsArrayBuffer(file);
+                var err, files = await ipfsNode.files.add({ path: '/attachment', content: Buffer.from(buf) });
+                attachmentHash = files[0].hash;
+                ipfsNode.pin.add(attachmentHash, (err) => console.log(err));
+            }
+
+            console.log("Posting", messageHash, attachmentHash);
+            var err, result = await contract.methods.post(messageHash, attachmentHash).send({ from: web3.eth.defaultAccount });
             console.log(err, result);
-            // TODO empty the input field here
         }
 
         // function setAvatar(hash) {
@@ -184,7 +211,7 @@
             },
             methods: {
                 submitPost: function () {
-                    post(this.$data.message)
+                    post(this.$data.message);
                 }
             }
         })
