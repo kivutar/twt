@@ -113,13 +113,13 @@ nav {
     color: var(--primary-color);
 }
 
-#twitter-app {
+#form {
     background: var(--bg-color-dark);
     border-bottom: var(--bg-color-dark) solid 1px;
     padding: 12px;
 }
 
-#twitter-app textarea {
+#form textarea {
     display: block;
     padding: 8px;
     margin-bottom: 12px;
@@ -130,7 +130,7 @@ nav {
     resize: none;
 }
 
-#twitter-app textarea:focus, #twitter-app textarea.expanded {
+#form textarea:focus, #form textarea.expanded {
     border: solid 1px var(--primary-color-light);
     box-shadow: 0 0 0 4px var(--primary-color-superlight);
     height: 92px;
