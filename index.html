@@ -159,7 +159,7 @@
                 v-model="message"
                 @focus="hasFocus = true"
                 @blur="hasFocus = false"
-                v-bind:class="{ expanded: message || hasFocus }"
+                v-bind:class="{ expanded: message || attachment || hasFocus }"
                 :placeholder="placeholder">
             </textarea>
             <input id="file-upload" type="file" v-on:change="previewFile()" v-model="attachment" />

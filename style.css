@@ -155,6 +155,7 @@ nav {
     right: 12px;
     top: 12px;
     padding: 6px 16px;
+    border: solid 1px transparent;
     color: var(--primary-color);
 }
 
