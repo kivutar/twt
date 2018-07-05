@@ -18,6 +18,11 @@ input:focus, button:focus, textarea:focus {
     outline: none;
 }
 
+::placeholder {
+    color: var(--primary-color-light);
+    opacity: 1;
+}
+
 .clearfix::after {
     content: "";
     clear: both;
@@ -122,7 +127,6 @@ nav {
 #form textarea {
     display: block;
     padding: 8px;
-    margin-bottom: 12px;
     border: solid 1px var(--primary-color-light);
     border-radius: 5px;
     width: 100%;
@@ -136,16 +140,17 @@ nav {
     height: 92px;
 }
 
-button {
+#form button {
     background: white;
     border: 1px solid var(--primary-color);
     padding: 6px 16px;
     border-radius: 5px;
     color: var(--primary-color);
     float: right;
+    margin-top: 12px;
 }
 
-button:hover {
+#form button:hover {
     background: var(--primary-color);
     border: 1px solid var(--primary-color);
     color: white;

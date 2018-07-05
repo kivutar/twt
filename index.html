@@ -140,17 +140,24 @@
     <nav></nav>
     <div class="container">
         <div id="form" class="clearfix">
-            <textarea v-model="message" v-bind:class="{ expanded: message != '' }" :placeholder="placeholder"></textarea>
-            <button v-on:click="submitPost()">Post</button>
+            <textarea
+                v-model="message"
+                @focus="hasFocus = true"
+                @blur="hasFocus = false"
+                v-bind:class="{ expanded: message || hasFocus }"
+                :placeholder="placeholder">
+            </textarea>
+            <button v-on:click="submitPost()" v-if="message || hasFocus">Post</button>
         </div>
         <div id="messages"></div>
     </div>
     <script>
-        var app6 = new Vue({
+        var form = new Vue({
             el: '#form',
             data: {
                 message: '',
-                placeholder: "What's on your mind?"
+                placeholder: "What's on your mind?",
+                hasFocus: false
             },
             methods: {
                 submitPost: () => {
