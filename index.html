@@ -6,18 +6,6 @@
     <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.min.js"></script>
     <script src="https://cdn.jsdelivr.net/gh/ethereum/web3.js@1.0.0-beta.34/dist/web3.min.js"></script>
     <script type="text/javascript">
-        var web3Instance = new Web3(Web3.givenProvider || Web3.currentProvider || 'https://rinkeby.infura.io');
-        web3Instance.eth.defaultAccount = web3Instance.eth.coinbase;
-
-        var ABI = [{ "constant": false, "inputs": [{ "name": "_hashContent", "type": "string" }, { "name": "_hashImage", "type": "string" }], "name": "post", "outputs": [], "payable": false, "stateMutability": "nonpayable", "type": "function" }, { "constant": true, "inputs": [{ "name": "", "type": "uint256" }], "name": "hashes", "outputs": [{ "name": "sender", "type": "address" }, { "name": "content", "type": "string" }, { "name": "image", "type": "string" }, { "name": "timestamp", "type": "uint256" }], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": true, "inputs": [], "name": "lastHashId", "outputs": [{ "name": "", "type": "uint256" }], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": false, "inputs": [{ "name": "_hashAvatar", "type": "string" }], "name": "set_avatar", "outputs": [], "payable": false, "stateMutability": "nonpayable", "type": "function" }, { "constant": true, "inputs": [{ "name": "", "type": "address" }], "name": "avatars", "outputs": [{ "name": "", "type": "string" }], "payable": false, "stateMutability": "view", "type": "function" }, { "inputs": [], "payable": false, "stateMutability": "nonpayable", "type": "constructor" }, { "anonymous": false, "inputs": [{ "indexed": true, "name": "sender", "type": "address" }, { "indexed": false, "name": "id", "type": "uint256" }, { "indexed": false, "name": "cid", "type": "string" }, { "indexed": false, "name": "img", "type": "string" }, { "indexed": false, "name": "timestamp", "type": "uint256" }], "name": "Message", "type": "event" }, { "anonymous": false, "inputs": [{ "indexed": true, "name": "sender", "type": "address" }, { "indexed": false, "name": "cid", "type": "string" }], "name": "Avatar", "type": "event" }]
-        var contractAddress = "0x5e626b58388f8b083d6d399f385c901675636b6e";
-        var contract = new web3Instance.eth.Contract(ABI, contractAddress);
-        var gateway = "https://ipfs.io/ipfs/";
-
-        const ipfsNode = window.ipfs; /*|| new Ipfs({
-            repo: 'twt',
-        });*/
-
         const readUploadedFileAsArrayBuffer = (file) => {
             const r = new FileReader();
 
@@ -169,9 +157,6 @@
                 });
             });
         }
-
-        var u = new URLSearchParams(window.location.search).get('u');
-        buildTweetList({ sender: u });
     </script>
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.1.0/css/all.css" integrity="sha384-lKuwvrZot6UHsBSfcMvOkWwlCMgc0TaWr+30HWe3a4ltaBwTZhyTEggF5tJv8tbt"
         crossorigin="anonymous">
@@ -179,30 +164,59 @@
 </head>
 
 <body>
-    <nav></nav>
-    <div class="container">
-        <div id="form" class="clearfix" v-if="!u">
-            <textarea
-                v-model="message"
-                @focus="hasFocus = true"
-                @blur="hasFocus = false"
-                v-bind:class="{ expanded: message || attachment || hasFocus }"
-                :placeholder="placeholder">
-            </textarea>
-            <input id="file-upload" type="file" v-on:change="previewFile()" v-model="attachment" />
-            <label for="file-upload" class="custom-file-upload pull-left"><i class="fas fa-image"></i></label>
-            <div class="preview-container pull-left"></div>
-            <button
-                class="pull-right"
-                v-on:click="submitPost()"
-                v-if="message || attachment || hasFocus"
-                :disabled="!message && ! attachment">Post</button>
+    <div id="twt">
+        <nav>
+            <div class="container clearfix">
+                <a href="/"><i class="fas fa-home"></i> Home</a>
+                <a href="/"><i class="fas fa-bell"></i> Notifications</a>
+                <a href="/"><i class="fas fa-envelope"></i> Messages</a>
+            </div>
+        </nav>
+        <div class="container clearfix">
+            <div class="left-column">
+                <div class="identity clearfix" v-if="!u">
+                    <img class="my-avatar" src="avatar.jpg">
+                    <div><b>Anonymous</b></div>
+                    <div>@ethaddress</div>
+                </div>
+            </div>
+            <div class="feed">
+                <div id="form" class="clearfix" v-if="!u">
+                    <textarea
+                        v-model="message"
+                        @focus="hasFocus = true"
+                        @blur="hasFocus = false"
+                        v-bind:class="{ expanded: message || attachment || hasFocus }"
+                        :placeholder="placeholder">
+                    </textarea>
+                    <input id="file-upload" type="file" v-on:change="previewFile()" v-model="attachment" />
+                    <label for="file-upload" class="custom-file-upload pull-left"><i class="fas fa-image"></i></label>
+                    <div class="preview-container pull-left"></div>
+                    <button
+                        class="pull-right"
+                        v-on:click="submitPost()"
+                        v-if="message || attachment || hasFocus"
+                        :disabled="!message && ! attachment">Post</button>
+                </div>
+                <div id="messages"></div>
+            </div>
         </div>
-        <div id="messages"></div>
     </div>
     <script>
-        var form = new Vue({
-            el: '#form',
+        var web3Instance = new Web3(Web3.givenProvider || Web3.currentProvider || 'https://rinkeby.infura.io');
+        web3Instance.eth.defaultAccount = web3Instance.eth.coinbase;
+
+        var ABI = [{ "constant": false, "inputs": [{ "name": "_hashContent", "type": "string" }, { "name": "_hashImage", "type": "string" }], "name": "post", "outputs": [], "payable": false, "stateMutability": "nonpayable", "type": "function" }, { "constant": true, "inputs": [{ "name": "", "type": "uint256" }], "name": "hashes", "outputs": [{ "name": "sender", "type": "address" }, { "name": "content", "type": "string" }, { "name": "image", "type": "string" }, { "name": "timestamp", "type": "uint256" }], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": true, "inputs": [], "name": "lastHashId", "outputs": [{ "name": "", "type": "uint256" }], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": false, "inputs": [{ "name": "_hashAvatar", "type": "string" }], "name": "set_avatar", "outputs": [], "payable": false, "stateMutability": "nonpayable", "type": "function" }, { "constant": true, "inputs": [{ "name": "", "type": "address" }], "name": "avatars", "outputs": [{ "name": "", "type": "string" }], "payable": false, "stateMutability": "view", "type": "function" }, { "inputs": [], "payable": false, "stateMutability": "nonpayable", "type": "constructor" }, { "anonymous": false, "inputs": [{ "indexed": true, "name": "sender", "type": "address" }, { "indexed": false, "name": "id", "type": "uint256" }, { "indexed": false, "name": "cid", "type": "string" }, { "indexed": false, "name": "img", "type": "string" }, { "indexed": false, "name": "timestamp", "type": "uint256" }], "name": "Message", "type": "event" }, { "anonymous": false, "inputs": [{ "indexed": true, "name": "sender", "type": "address" }, { "indexed": false, "name": "cid", "type": "string" }], "name": "Avatar", "type": "event" }]
+        var contractAddress = "0x5e626b58388f8b083d6d399f385c901675636b6e";
+        var contract = new web3Instance.eth.Contract(ABI, contractAddress);
+        var gateway = "https://ipfs.io/ipfs/";
+
+        const ipfsNode = window.ipfs; /*|| new Ipfs({
+            repo: 'twt',
+        });*/
+
+        new Vue({
+            el: '#twt',
             data: {
                 message: '',
                 attachment: '',
@@ -216,6 +230,9 @@
                 }
             }
         })
+
+        var u = new URLSearchParams(window.location.search).get('u');
+        buildTweetList({ sender: u });
     </script>
 </body>
 

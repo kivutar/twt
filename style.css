@@ -9,6 +9,7 @@
     --primary-color: #3675a8;
     --primary-color-light: #63a3d6;
     --primary-color-superlight: #b1dcff;
+    --primary-color-dark: #1b4b72;
     --text-color: #24292e;
     --text-color-dark: black;
     --text-color-hinted: #a9a9a9;
@@ -45,13 +46,52 @@ body, button, div, p, textarea {
 
 nav {
     background: var(--primary-color);
-    min-height: 50px;
+    height: 50px;
+    margin-bottom: 12px;
+}
+
+nav a {
+    color: white;
+    line-height: 50px;
+    padding: 0 12px;
+    text-decoration: none;
+    font-weight: bold;
+    display: inline-block;
+}
+
+nav a:hover {
+    background: var(--primary-color-dark);
 }
 
 .container {
-    background: white;
-    max-width: 640px;
+    width: 1240px;
     margin: 0 auto;
+}
+
+.left-column {
+    width: 300px;
+    float: left;
+    min-height: 1px;
+}
+
+.identity {
+    padding: 12px;
+    background: white;
+    margin-right: 12px;
+}
+
+.my-avatar {
+    width: 30%;
+    border-radius: 12px;
+    float: left;
+    margin-right: 12px;
+    cursor: pointer;
+}
+
+.feed {
+    background: white;
+    width: 640px;
+    float: left;
 }
 
 #messages>div {
