@@ -3,15 +3,15 @@
 }
 
 :root {
-    --bg-color-light: #fdfbfd;
-    --bg-color: #f4f4f6;
-    --bg-color-dark: #efeff1;
+    --bg-color-light: #fafafa;
+    --bg-color: #f3f3f3;
+    --bg-color-dark: #e8e8e8;
     --primary-color: #3675a8;
     --primary-color-light: #63a3d6;
     --primary-color-superlight: #b1dcff;
     --text-color: #24292e;
     --text-color-dark: black;
-    --text-color-hinted: #d0d0d0;
+    --text-color-hinted: #a9a9a9;
 }
 
 input:focus, button:focus, textarea:focus {

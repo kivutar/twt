@@ -181,7 +181,7 @@
 <body>
     <nav></nav>
     <div class="container">
-        <div id="form" class="clearfix">
+        <div id="form" class="clearfix" v-if="!u">
             <textarea
                 v-model="message"
                 @focus="hasFocus = true"
@@ -207,7 +207,8 @@
                 message: '',
                 attachment: '',
                 placeholder: "What's on your mind?",
-                hasFocus: false
+                hasFocus: false,
+                u: new URLSearchParams(window.location.search).get('u')
             },
             methods: {
                 submitPost: function () {
